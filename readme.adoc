@@ -1,7 +1,32 @@
 = Le modèle MCV - exemples concrets
 
-== Rappel du modèle
+== Rappel du modèle MVC
 
 == Exemple 1 - Une application 100% Java
 
+=== La partie "modèle"
+
+=== La partie "contrôleur"
+
+=== La partie "vue"
+
 == Exemple 2 - Une application Java / Web
+
+=== La partie "modèle"
+
+=== La partie "contrôleur"
+
+=== La partie "vue"
+
+[NOTE]
+====
+Cet exemple contient du code Java hors programme (l'utilisation du framework Spring-Boot...). Ne pas s'en soucier.
+====
+
+== Imaginer plus loin - Une application Java / Mobile
+
+=== La partie "modèle"
+
+=== La partie "contrôleur"
+
+=== La partie "vue"
