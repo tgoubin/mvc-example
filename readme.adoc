@@ -1,0 +1,7 @@
+= Le modèle MCV - exemples concrets
+
+== Rappel du modèle
+
+== Exemple 1 - Une application 100% Java
+
+== Exemple 2 - Une application Java / Web
