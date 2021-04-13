@@ -16,7 +16,7 @@ public class Fenetre extends JFrame {
 
 	private static final String TITRE = "Liste des etudiants";
 
-	private static final int LARGEUR = 800;
+	private static final int LARGEUR = 1000;
 	private static final int HAUTEUR = 600;
 
 	/**

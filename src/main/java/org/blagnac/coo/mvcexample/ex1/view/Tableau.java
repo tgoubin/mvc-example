@@ -1,14 +1,16 @@
 package org.blagnac.coo.mvcexample.ex1.view;
 
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
-import org.blagnac.coo.mvcexample.ex1.controller.EtudiantController;
+import org.blagnac.coo.mvcexample.ex1.controller.Exemple1EtudiantController;
 import org.blagnac.coo.mvcexample.model.Etudiant;
 
 /**
@@ -18,37 +20,46 @@ public class Tableau extends JPanel {
 
 	private static final long serialVersionUID = 6782929412739429045L;
 
+	private static final int LARGEUR_TABLEAU = 900;
+	private static final int HAUTEUR_TABLEAU = 480;
+
 	private JTable tableauEtudiants;
 
 	/**
 	 * Constructeur
 	 */
 	public Tableau() {
-		// Parametrage de l'en-tete
+		// Parametrage du panel
 		setLayout(new FlowLayout(FlowLayout.CENTER));
 
+		// Parametrage du tableau
 		tableauEtudiants = new JTable();
 		tableauEtudiants.setModel(new TableauEtudiantsModel());
-		add(tableauEtudiants);
+		tableauEtudiants.setPreferredScrollableViewportSize(new Dimension(LARGEUR_TABLEAU, HAUTEUR_TABLEAU));
+		add(new JScrollPane(tableauEtudiants));
 	}
 
 	/**
 	 * Mise a jour du tableau des etudiants en fonction des (eventuels) filtres
 	 * 
-	 * @param nom      la valeur du filtre sur le nom
-	 * @param prenom   la valeur du filtre sur lele prenom
-	 * @param groupeTP la valeur du filtre sur lele groupe de TP
+	 * @param nom                 la valeur du filtre sur le nom
+	 * @param prenom              la valeur du filtre sur lele prenom
+	 * @param identifiantGroupeTP la valeur du filtre sur le groupe de TP
 	 */
-	public void majTableau(String nom, String prenom, String groupeTP) {
+	public void majTableau(String nom, String prenom, String identifiantGroupeTP) {
 		TableauEtudiantsModel tableauEtudiantsModel = (TableauEtudiantsModel) tableauEtudiants.getModel();
 
-		if (nom == null && prenom == null && groupeTP == null) {
+		List<Etudiant> etudiants = null;
+		if (nom == null && prenom == null && identifiantGroupeTP == null) {
 			// Aucun filtrage
-			tableauEtudiantsModel.setEtudiants(EtudiantController.getAll());
-			tableauEtudiantsModel.fireTableDataChanged();
+			etudiants = Exemple1EtudiantController.getAll();
 		} else {
-
+			// Recherche par criteres
+			etudiants = Exemple1EtudiantController.getBy(nom, prenom, identifiantGroupeTP);
 		}
+
+		tableauEtudiantsModel.setEtudiants(etudiants);
+		tableauEtudiantsModel.fireTableDataChanged();
 	}
 
 	/**
@@ -57,6 +68,15 @@ public class Tableau extends JPanel {
 	private static class TableauEtudiantsModel extends AbstractTableModel {
 
 		private static final long serialVersionUID = -1993914232997885021L;
+
+		private static final String COLONNE_NOM = "NOM";
+		private static final String COLONNE_PRENOM = "PRENOM";
+		private static final String COLONNE_ANNEE = "ANNEE";
+		private static final String COLONNE_GROUPE_TD = "GROUPE DE TD";
+		private static final String COLONNE_GROUPE_TP = "GROUPE DE TP";
+
+		private static final String[] COLONNES = new String[] { COLONNE_NOM, COLONNE_PRENOM, COLONNE_ANNEE,
+				COLONNE_GROUPE_TD, COLONNE_GROUPE_TP };
 
 		private List<Etudiant> etudiants;
 
@@ -77,8 +97,13 @@ public class Tableau extends JPanel {
 		}
 
 		@Override
+		public String getColumnName(int column) {
+			return COLONNES[column];
+		}
+
+		@Override
 		public int getColumnCount() {
-			return 3;
+			return COLONNES.length;
 		}
 
 		@Override
@@ -94,8 +119,13 @@ public class Tableau extends JPanel {
 				value = etudiant.getPrenom();
 				break;
 			case 2:
-				value = etudiant.getGroupeTP().toString();
+				value = etudiant.getGroupeTP().getGroupeTD().getAnnee();
 				break;
+			case 3:
+				value = etudiant.getGroupeTP().getGroupeTD().getNumero();
+				break;
+			case 4:
+				value = etudiant.getGroupeTP().getGroupe();
 			default:
 				break;
 			}

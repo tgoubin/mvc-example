@@ -34,7 +34,7 @@ public class GroupeTP {
 	/**
 	 * 'A' pour groupe A, 'B' pour groupe B, etc...
 	 */
-	private char groupe;
+	private Character groupe;
 
 	/**
 	 * Constructeur
@@ -43,7 +43,7 @@ public class GroupeTP {
 	 * @param groupeTD    le groupe de TD
 	 * @param numero      le numero
 	 */
-	public GroupeTP(String identifiant, GroupeTD groupeTD, char groupe) {
+	public GroupeTP(String identifiant, GroupeTD groupeTD, Character groupe) {
 		this.identifiant = identifiant;
 		this.groupeTD = groupeTD;
 		this.groupe = groupe;
@@ -69,7 +69,7 @@ public class GroupeTP {
 		return groupe;
 	}
 
-	public void setGroupe(char groupe) {
+	public void setGroupe(Character groupe) {
 		this.groupe = groupe;
 	}
 
@@ -79,6 +79,9 @@ public class GroupeTP {
 	 */
 	@Override
 	public String toString() {
+		if (identifiant == null) {
+			return "";
+		}
 		return groupeTD.toString() + groupe;
 	}
 

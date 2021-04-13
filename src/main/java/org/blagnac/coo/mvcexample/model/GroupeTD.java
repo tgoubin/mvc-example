@@ -79,7 +79,10 @@ public class GroupeTD {
 	 */
 	@Override
 	public String toString() {
-		return String.valueOf(annee) + String.valueOf(numero);
+		if (identifiant == null) {
+			return "";
+		}
+		return String.valueOf(annee) + "e annee - Groupe " + String.valueOf(numero);
 	}
 
 	/**

@@ -6,7 +6,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.Vector;
-import java.util.stream.Collectors;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -15,7 +14,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.blagnac.coo.mvcexample.ex1.controller.GroupeTPController;
+import org.blagnac.coo.mvcexample.ex1.controller.Exemple1GroupeTPController;
+import org.blagnac.coo.mvcexample.model.GroupeTP;
 
 /**
  * En-tete de la fenetre
@@ -40,7 +40,7 @@ public class EnTete extends JPanel {
 
 	private JTextField inputRechercheNom;
 	private JTextField inputRecherchePrenom;
-	private JComboBox<String> inputRechercheGroupeTP;
+	private JComboBox<GroupeTP> inputRechercheGroupeTP;
 
 	private JButton btRechercher;
 	private JButton btAfficherTout;
@@ -91,10 +91,9 @@ public class EnTete extends JPanel {
 	 * 
 	 * @return la liste des identifiants des groupes de TP
 	 */
-	private List<String> getGroupesTP() {
-		List<String> groupesTP = GroupeTPController.getAll().stream().map(g -> g.toString())
-				.collect(Collectors.toList());
-		groupesTP.add(0, "");
+	private List<GroupeTP> getGroupesTP() {
+		List<GroupeTP> groupesTP = Exemple1GroupeTPController.getAll();
+		groupesTP.add(0, new GroupeTP(null, null, null));
 		return groupesTP;
 	}
 
@@ -106,7 +105,8 @@ public class EnTete extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
+				tableau.majTableau(inputRechercheNom.getText(), inputRecherchePrenom.getText(),
+						((GroupeTP) inputRechercheGroupeTP.getSelectedItem()).getIdentifiant());
 			}
 		});
 	}
@@ -119,6 +119,9 @@ public class EnTete extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				inputRechercheNom.setText("");
+				inputRecherchePrenom.setText("");
+				inputRechercheGroupeTP.setSelectedIndex(0);
 				tableau.majTableau(null, null, null);
 			}
 		});
@@ -127,15 +130,15 @@ public class EnTete extends JPanel {
 	/**
 	 * Modele de combobox pour la liste des groupes de TP
 	 */
-	private static class GroupeTPComboBoxModel extends DefaultComboBoxModel<String> {
+	private static class GroupeTPComboBoxModel extends DefaultComboBoxModel<GroupeTP> {
 
 		private static final long serialVersionUID = 553605937872036148L;
 
 		/**
 		 * Constructeur
 		 */
-		public GroupeTPComboBoxModel(List<String> groupesTP) {
-			super(new Vector<String>(groupesTP));
+		public GroupeTPComboBoxModel(List<GroupeTP> groupesTP) {
+			super(new Vector<GroupeTP>(groupesTP));
 		}
 	}
 }

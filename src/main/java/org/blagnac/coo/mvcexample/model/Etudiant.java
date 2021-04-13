@@ -2,7 +2,9 @@ package org.blagnac.coo.mvcexample.model;
 
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.opencsv.CSVReader;
 
@@ -118,5 +120,56 @@ public class Etudiant {
 			System.err.println("Erreur durant la recuperation des etudiants");
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Recuperation des etudiants depuis le modele
+	 * 
+	 * @return les etudiants
+	 */
+	public static List<Etudiant> getAll() {
+		// On copie la liste d'etudiants pour pouvoir la trier, sans impacter les
+		// donnees initiales (Etudiant.LISTE)
+		List<Etudiant> etudiants = new ArrayList<>(Etudiant.LISTE);
+
+		// Tri par nom, puis par prenom
+		etudiants.sort(Comparator.comparing(Etudiant::getNom).thenComparing(Etudiant::getPrenom));
+
+		return etudiants;
+	}
+
+	/**
+	 * Recuperation des etudiants depuis le modele, et selon des filtres de
+	 * recherche
+	 * 
+	 * @param nom                 la valeur du filtre sur le nom
+	 * @param prenom              la valeur du filtre sur lele prenom
+	 * @param identifiantGroupeTP la valeur du filtre sur le groupe de TP
+	 * @return les etudiants correspondant aux filtres de recherche
+	 */
+	public static List<Etudiant> getBy(String nom, String prenom, String identifiantGroupeTP) {
+		// On recupere tous les etudiants deja tries
+		List<Etudiant> etudiants = getAll();
+
+		// Filtre par nom
+		if (nom != null && !"".equals(nom.trim())) {
+			etudiants = etudiants.stream().filter(e -> e.getNom().toLowerCase().contains(nom.trim().toLowerCase()))
+					.collect(Collectors.toList());
+		}
+
+		// Filtre par prenom
+		if (prenom != null && !"".equals(prenom.trim())) {
+			etudiants = etudiants.stream()
+					.filter(e -> e.getPrenom().toLowerCase().contains(prenom.trim().toLowerCase()))
+					.collect(Collectors.toList());
+		}
+
+		// Filtre par prenom
+		if (identifiantGroupeTP != null && !"".equals(identifiantGroupeTP.trim())) {
+			etudiants = etudiants.stream().filter(e -> e.getGroupeTP().getIdentifiant().equals(identifiantGroupeTP))
+					.collect(Collectors.toList());
+		}
+
+		return etudiants;
 	}
 }

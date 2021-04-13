@@ -5,9 +5,9 @@ import java.util.List;
 import org.blagnac.coo.mvcexample.model.GroupeTP;
 
 /**
- * Controleur pour les groupes de TP
+ * Controleur pour les groupes de TP (exemple 1)
  */
-public class GroupeTPController {
+public class Exemple1GroupeTPController {
 
 	/**
 	 * Recuperation des groupes de TP depuis le modele
