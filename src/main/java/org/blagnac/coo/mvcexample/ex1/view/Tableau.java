@@ -48,17 +48,7 @@ public class Tableau extends JPanel {
 	 */
 	public void majTableau(String nom, String prenom, String identifiantGroupeTP) {
 		TableauEtudiantsModel tableauEtudiantsModel = (TableauEtudiantsModel) tableauEtudiants.getModel();
-
-		List<Etudiant> etudiants = null;
-		if (nom == null && prenom == null && identifiantGroupeTP == null) {
-			// Aucun filtrage
-			etudiants = Exemple1EtudiantController.getAll();
-		} else {
-			// Recherche par criteres
-			etudiants = Exemple1EtudiantController.getBy(nom, prenom, identifiantGroupeTP);
-		}
-
-		tableauEtudiantsModel.setEtudiants(etudiants);
+		tableauEtudiantsModel.setEtudiants(Exemple1EtudiantController.get(nom, prenom, identifiantGroupeTP));
 		tableauEtudiantsModel.fireTableDataChanged();
 	}
 
@@ -91,21 +81,34 @@ public class Tableau extends JPanel {
 			this.etudiants = etudiants;
 		}
 
+		/**
+		 * Methode de "AbstractTableModel" a implementer
+		 */
 		@Override
 		public int getRowCount() {
 			return etudiants.size();
 		}
 
+		/**
+		 * Methode de "AbstractTableModel" a redefinir pour avoir les bons noms de
+		 * colonnes
+		 */
 		@Override
 		public String getColumnName(int column) {
 			return COLONNES[column];
 		}
 
+		/**
+		 * Methode de "AbstractTableModel" a implementer
+		 */
 		@Override
 		public int getColumnCount() {
 			return COLONNES.length;
 		}
 
+		/**
+		 * Methode de "AbstractTableModel" a implementer
+		 */
 		@Override
 		public Object getValueAt(int rowIndex, int columnIndex) {
 			Object value = null;

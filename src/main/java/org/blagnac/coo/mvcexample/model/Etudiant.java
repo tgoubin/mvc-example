@@ -1,6 +1,7 @@
 package org.blagnac.coo.mvcexample.model;
 
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -11,10 +12,12 @@ import com.opencsv.CSVReader;
 /**
  * Classe metier de representation d'un Etudiant
  */
-public class Etudiant {
+public class Etudiant implements Serializable {
+
+	private static final long serialVersionUID = 417979284812134072L;
 
 	/**
-	 * Stockage des groupes de TP
+	 * Stockage des etudiants
 	 */
 	public static List<Etudiant> LISTE = new ArrayList<>();
 
@@ -91,7 +94,7 @@ public class Etudiant {
 	}
 
 	/**
-	 * Recuperation de tous les etudiants
+	 * Chargement de tous les etudiants
 	 */
 	@SuppressWarnings("deprecation")
 	public static void loadEtudiants() {

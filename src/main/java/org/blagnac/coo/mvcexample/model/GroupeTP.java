@@ -1,6 +1,7 @@
 package org.blagnac.coo.mvcexample.model;
 
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +10,9 @@ import com.opencsv.CSVReader;
 /**
  * Classe metier de representation d'un Groupe de TP
  */
-public class GroupeTP {
+public class GroupeTP implements Serializable {
+
+	private static final long serialVersionUID = -103444635559890386L;
 
 	/**
 	 * Stockage des groupes de TP
@@ -86,7 +89,7 @@ public class GroupeTP {
 	}
 
 	/**
-	 * Recuperation de tous les groupes de TP
+	 * Chargement de tous les groupes de TP
 	 */
 	@SuppressWarnings("deprecation")
 	public static void loadGroupesTP() {

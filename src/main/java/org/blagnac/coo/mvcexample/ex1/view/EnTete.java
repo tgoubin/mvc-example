@@ -103,6 +103,9 @@ public class EnTete extends JPanel {
 	private void onClickBtRechercher() {
 		btRechercher.addActionListener(new ActionListener() {
 
+			/**
+			 * Methode appelee au clic sur le bouton "Rechercher"
+			 */
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				tableau.majTableau(inputRechercheNom.getText(), inputRecherchePrenom.getText(),
@@ -117,6 +120,9 @@ public class EnTete extends JPanel {
 	private void onClickBtAfficherTout() {
 		btAfficherTout.addActionListener(new ActionListener() {
 
+			/**
+			 * Methode appelee au clic sur le bouton "Afficher tout"
+			 */
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				inputRechercheNom.setText("");
