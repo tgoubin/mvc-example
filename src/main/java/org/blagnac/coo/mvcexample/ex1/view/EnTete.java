@@ -93,6 +93,7 @@ public class EnTete extends JPanel {
 	 */
 	private List<GroupeTP> getGroupesTP() {
 		List<GroupeTP> groupesTP = Exemple1GroupeTPController.getAll();
+		// Ajout d'un element vide destine a la premiere position de la ComboBox
 		groupesTP.add(0, new GroupeTP(null, null, null));
 		return groupesTP;
 	}
