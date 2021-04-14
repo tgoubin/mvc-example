@@ -10,7 +10,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
-import org.blagnac.coo.mvcexample.ex1.controller.Exemple1EtudiantController;
 import org.blagnac.coo.mvcexample.model.Etudiant;
 
 /**
@@ -48,7 +47,15 @@ public class Tableau extends JPanel {
 	 */
 	public void majTableau(String nom, String prenom, String identifiantGroupeTP) {
 		TableauEtudiantsModel tableauEtudiantsModel = (TableauEtudiantsModel) tableauEtudiants.getModel();
-		tableauEtudiantsModel.setEtudiants(Exemple1EtudiantController.get(nom, prenom, identifiantGroupeTP));
+
+		if (nom == null && prenom == null && identifiantGroupeTP == null) {
+			// Aucun filtrage
+			tableauEtudiantsModel.setEtudiants(Etudiant.getAll());
+		} else {
+			// Recherche par criteres
+			tableauEtudiantsModel.setEtudiants(Etudiant.getBy(nom, prenom, identifiantGroupeTP));
+		}
+
 		tableauEtudiantsModel.fireTableDataChanged();
 	}
 

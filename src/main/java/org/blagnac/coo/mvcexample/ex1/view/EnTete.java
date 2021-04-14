@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -14,7 +15,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.blagnac.coo.mvcexample.ex1.controller.Exemple1GroupeTPController;
 import org.blagnac.coo.mvcexample.model.GroupeTP;
 
 /**
@@ -92,7 +92,7 @@ public class EnTete extends JPanel {
 	 * @return la liste des identifiants des groupes de TP
 	 */
 	private List<GroupeTP> getGroupesTP() {
-		List<GroupeTP> groupesTP = Exemple1GroupeTPController.getAll();
+		List<GroupeTP> groupesTP = new ArrayList<>(GroupeTP.LISTE);
 		// Ajout d'un element vide destine a la premiere position de la ComboBox
 		groupesTP.add(0, new GroupeTP(null, null, null));
 		return groupesTP;
