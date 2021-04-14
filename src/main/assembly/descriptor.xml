@@ -17,8 +17,11 @@
 			</includes>
 		</fileSet>
 		<fileSet>
-			<directory>${project.basedir}/src/main/webapp</directory>
-			<outputDirectory>./mvc-example/bin</outputDirectory>
+			<directory>${project.basedir}/target</directory>
+			<outputDirectory>./mvc-example</outputDirectory>
+			<includes>
+				<include>readme.html</include>
+			</includes>
 		</fileSet>
 		<fileSet>
 			<directory>${project.basedir}/src/main/scripts</directory>

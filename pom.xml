@@ -13,6 +13,8 @@
 		<opencsv.version>4.5</opencsv.version>
 		<maven.compiler.version>3.8.1</maven.compiler.version>
 		<maven.jar.version>3.1.0</maven.jar.version>
+		<asciidoctor.maven.version>1.5.6</asciidoctor.maven.version>
+		<asciidoctorj.diagram.maven.version>1.5.8</asciidoctorj.diagram.maven.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
@@ -53,6 +55,38 @@
 							<classifier>spring-boot</classifier>
 							<finalName>mvc-example2</finalName>
 							<mainClass>org.blagnac.coo.mvcexample.ex2.Exemple2Application</mainClass>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.asciidoctor</groupId>
+				<artifactId>asciidoctor-maven-plugin</artifactId>
+				<version>${asciidoctor.maven.version}</version>
+				<dependencies>
+					<dependency>
+						<groupId>org.asciidoctor</groupId>
+						<artifactId>asciidoctorj-diagram</artifactId>
+						<version>${asciidoctorj.diagram.maven.version}</version>
+					</dependency>
+				</dependencies>
+				<executions>
+					<execution>
+						<id>generate_readme</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>process-asciidoc</goal>
+						</goals>
+						<configuration>
+							<backend>html5</backend>
+							<sourceDirectory>src/main/doc</sourceDirectory>
+							<sourceDocumentExtensions>
+								<sourceDocumentExtension>adoc</sourceDocumentExtension>
+							</sourceDocumentExtensions>
+							<outputDirectory>target</outputDirectory>
+							<requires>
+								<require>asciidoctor-diagram</require>
+							</requires>
 						</configuration>
 					</execution>
 				</executions>

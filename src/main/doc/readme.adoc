@@ -1,0 +1,159 @@
+= Le modèle MVC par l'exemple
+
+== Le principe du modèle MVC
+
+Concevoir son application en respectant une séparation *M* odèle - *V* ue - *C* ontrôleur, comme défini ci-dessous :
+
+=== Le modèle
+
+Cette partie contient l'ensemble des éléments liés au modèle de données *métier* de l'application.
+
+On va notamment y retrouver les classes correspondant aux tables d'une éventuelle base de données.
+
+On appelle ces classes les *entités*.
+
+=== La vue
+
+Cette partie contient l'ensemble des éléménts qui composent l'interface graphique (*IHM*) de l'application.
+
+Cette IHM peut être :
+
+* un *client léger* : interface web (utilisant les technologies HTML / JavaScript / CSS) exécutée depuis un navigateur (Chrome, Internet Explorer, Firefox...)
+* un *client lourd* : interface exécutable directement depuis le système d'exploitation (Swing, QT, GTK...)
+* pourquoi pas une simple sortie console
+
+=== Le contrôleur
+
+Cette partie contient l'ensemble des éléments qui permettent à la vue et au modèle de communiquer, sachant que :
+* *le modèle ne communique jamais directement avec la vue*
+* *la vue ne communique jamais directement avec le modèle*
+
+*L'intérêt de l'utilisation de ce modèle ?*
+
+* construire son application de manière organisée
+* faciliter sa maintenance
+* permettre la conception d'applications "multi-tiers" (voir exemple 2)
+
+== Un cas concret : une application simple d'affichage des étudiants
+
+Dans les exemples qui vont suivre, nous allons voir plusieurs solutions techniques qui pourraient être proposées - tout en respectant le modèle MVC - pour le développement d'une application (très simple) d'affichage des étudiants.
+
+Cette application doit :
+
+* stocker les informations sur un certain nombre d'étudiants (nom, prénom, année, groupe de TD, groupe de TP)
+* présenter cette liste d'étudiants
+** soit l'ensemble des étudiants
+** soit les étudiants répondant à une recherche par critère
+
+=== Exemple 1 - Une application 100% Java
+
+Dans cet exemple, nous allons détailler l'architecture d'une première solution, dont voici les spécificités techniques :
+
+* stockage des informations sur les étudiants dans des fichiers CSV (texte utilisant un séparateur)
+* interface graphique en *Swing*
+
+La technologie *Java* est donc la seule utilisée.
+
+=== Le stockage des informations
+
+Si nous devions imaginer un modèle de base de données pour notre application, nous aurions pu proposer ceci :
+
+Pour simplifier, nous utilisons donc les fichiers CSV suivants, en guise de stockage des informations :
+
+* `src/main/resources/groupesTD.csv` : liste des groupes de TD (colonnes identifiant, année, numéro)
+* `src/main/resources/groupesTP.csv` : liste des groupes de TP (colonnes identifiant, groupe de TD associé, groupe)
+* `src/main/resources/etudiants.csv` : liste des étudiants (colonnes nom, prénom, groupe de TP associé)
+
+Au lancement de l'application, les données sont chargées dans des variables statiques, accessibles dès lors depuis n'importe quelle classe. Ce processus a lieu dans `org.blagnac.coo.mvcexample.controller.MainController > loadData()`, et est appelé depuis la classe principale.
+
+[NOTE]
+====
+Cette partie est valable pour tous les exemples.
+====
+
+=== La partie "modèle"
+
+[NOTE]
+====
+Cette partie est valable pour tous les exemples.
+====
+
+Les classes du modèle sont dans le package `org.blagnac.coo.mvcexample.model` :
+
+* `Etudiant.java`
+* `GroupeTD.java`
+* `GroupeTP.java`
+
+Comme expliqué plus haut, ces classes peuvent être assimilées à des entités, c'est à dire la correspondance en classes Java de notre "pseudo" modèle de données. Nous pouvons également y noter la présence de méthodes statiques de chargement (à partir de la lecture des fichiers CSV) et d'accès aux données (avec potentiellement du tri, du filtrage, etc...).
+
+[NOTE]
+====
+Par bonne pratique, dans le cas de l'utilisation d'une vraie base de données, ces méthodes d'accès aux données (par requêtage SQL donc) seraient placées dans d'autres classes.
+====
+
+==== La partie "vue"
+
+Les classes du modèle sont dans le package `org.blagnac.coo.mvcexample.ex1.view` :
+
+* `Fenetre.java` : la classe qui permet l'affichage de la fenêtre principale de l'application
+* `EnTete.java` : la classe qui permet l'affichage des filtres de recherche et des boutons
+* `Tableau.java` : la classe qui permet l'affichage du tableau des étudiants
+
+A deux endroits, des éléments de l'IHM ont besoin d'utiliser des données du modèle :
+
+* la liste déroulante pour filtrer par groupe de TP : `EnTete > getGroupesTP()`
+* le tableau des étudiants : `Tableau > majTableau(...)`
+
+*Un(des) contôleur(s) doit(vent) donc intervenir ici, pour faire lien entre la vue (l'IHM) et le modèle (les données).*
+
+==== La partie "contrôleur"
+
+Les classes du modèle sont dans le package `org.blagnac.coo.mvcexample.ex1.controller` :
+
+* `Exemple1EtudiantController.java` : le contrôleur qui concerne les étudiants
+** méthode `get()` : récupération des étudiants, filtrés ou non
+* `Exemple1GroupeTPController.java` : le contrôleur qui concerne les groupes de TP
+** méthode `getAll()` : récupération de tous les groupes de TP
+
+==== Intégralité de l'application
+
+=== Exemple 2 - Une application Java / Web
+
+Dans l'exemple précédent, certains pourraient s'interroger sur l'utilité de la partie contrôleur.
+
+En effet, les méthodes de `Exemple1EtudiantController` et `Exemple1GroupeTPController` servent bien de relai entre la vue et le modèle, mais ne sont techniquement pas indispensables au bon fonctionnement de l'application.
+
+Par exemple, dans la classe `EnTete`, nous avons ceci :
+
+----
+private List<GroupeTP> getGroupesTP() {
+	List<GroupeTP> groupesTP = Exemple1GroupeTPController.getAll();
+	groupesTP.add(0, new GroupeTP(null, null, null));
+	return groupesTP;
+}
+----
+
+si, au lieu d'appeler `Exemple1GroupeTPController.getAll()` nous avions utilisé `new ArrayList<>(GroupeTP.LISTE)` (utilisation directe de la partie modèle, donc), tout aurait fonctionné sans le moindre souci.
+
+Nous allons donc voir un cas - techniquement un peu plus complexe - dans lequel l'existence de la partie contrôleur est indispensable.
+
+[NOTE]
+====
+Cet exemple contient du Java hors programme (l'utilisation du framework Spring-Boot...). Ne pas s'en soucier.
+====
+
+==== La partie "modèle"
+
+==== La partie "vue"
+
+==== La partie "contrôleur"
+
+==== Intégralité de l'application
+
+=== Imaginer plus loin - Une application Java / Mobile
+
+==== La partie "modèle"
+
+==== La partie "vue"
+
+==== La partie "contrôleur"
