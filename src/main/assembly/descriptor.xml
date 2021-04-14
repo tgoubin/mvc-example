@@ -20,6 +20,7 @@
 			<directory>${project.basedir}/target</directory>
 			<outputDirectory>./mvc-example</outputDirectory>
 			<includes>
+				<include>images/**</include>
 				<include>readme.html</include>
 			</includes>
 		</fileSet>

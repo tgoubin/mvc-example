@@ -4,13 +4,28 @@
 
 Concevoir son application en respectant une séparation *M* odèle - *V* ue - *C* ontrôleur, comme défini ci-dessous :
 
+[plantuml, "modele-mvc", png]  
+----
+@startuml
+
+package modele
+package controleur
+package vue
+
+vue -> controleur
+controleur -> modele
+modele <.. vue
+
+@enduml
+----
+
 === Le modèle
 
 Cette partie contient l'ensemble des éléments liés au modèle de données *métier* de l'application.
 
-On va notamment y retrouver les classes correspondant aux tables d'une éventuelle base de données.
+On peut notamment y retrouver les classes correspondant aux tables d'une base de données.
 
-On appelle ces classes les *entités*.
+Ces classes sont appelées les *entités*.
 
 === La vue
 
@@ -24,9 +39,10 @@ Cette IHM peut être :
 
 === Le contrôleur
 
-Cette partie contient l'ensemble des éléments qui permettent à la vue et au modèle de communiquer, sachant que :
-* *le modèle ne communique jamais directement avec la vue*
-* *la vue ne communique jamais directement avec le modèle*
+Cette partie contient l'ensemble des éléments qui permettent de contrôler les données qui transitent entre la vue et le modèle :
+
+* *ce passage par le contrôleur est obligatoire dans le cas d'une écriture (création, modification, suppression) de données*
+* ce passage par le contrôleur peut être facultatif dans le cas d'une lecture de données : dans ce cas, la vue peut directement (selon l'architecture logicielle) les obtenir depuis le modèle
 
 *L'intérêt de l'utilisation de ce modèle ?*
 
@@ -99,43 +115,30 @@ Les classes du modèle sont dans le package `org.blagnac.coo.mvcexample.ex1.view
 * `EnTete.java` : la classe qui permet l'affichage des filtres de recherche et des boutons
 * `Tableau.java` : la classe qui permet l'affichage du tableau des étudiants
 
-A deux endroits, des éléments de l'IHM ont besoin d'utiliser des données du modèle :
+A plusieurs endroits, des éléments de l'IHM ont besoin d'utiliser des données du modèle :
 
-* la liste déroulante pour filtrer par groupe de TP : `EnTete > getGroupesTP()`
-* le tableau des étudiants : `Tableau > majTableau(...)`
+* en lecture :
+** la liste déroulante pour filtrer par groupe de TP : `EnTete > getGroupesTP()`
+** le tableau des étudiants : `Tableau > majTableau(...)`
 
-*Un(des) contôleur(s) doit(vent) donc intervenir ici, pour faire lien entre la vue (l'IHM) et le modèle (les données).*
+*Dans ce cas, la vue peut accéder directement au modèle, ce qu'elle fait par l'utilisation de `Etudiant.getAll()`, `Etudiant.getBy(...)` et `GroupeTP.LISTE`*.
+
+* en écriture :
+
+*Dans ce cas, un contrôleur doit donc intervenir, pour faire transiter les données à ajouter / modifier / supprimer entre la vue (l'IHM) et le modèle (les données).*
 
 ==== La partie "contrôleur"
 
 Les classes du modèle sont dans le package `org.blagnac.coo.mvcexample.ex1.controller` :
 
 * `Exemple1EtudiantController.java` : le contrôleur qui concerne les étudiants
-** méthode `get()` : récupération des étudiants, filtrés ou non
-* `Exemple1GroupeTPController.java` : le contrôleur qui concerne les groupes de TP
-** méthode `getAll()` : récupération de tous les groupes de TP
+** méthode `create()` : ajout d'un étudiant
+** méthode `update()` : modification d'un étudiant
+** méthode `delete()` : suppression d'un étudiant
 
 ==== Intégralité de l'application
 
 === Exemple 2 - Une application Java / Web
-
-Dans l'exemple précédent, certains pourraient s'interroger sur l'utilité de la partie contrôleur.
-
-En effet, les méthodes de `Exemple1EtudiantController` et `Exemple1GroupeTPController` servent bien de relai entre la vue et le modèle, mais ne sont techniquement pas indispensables au bon fonctionnement de l'application.
-
-Par exemple, dans la classe `EnTete`, nous avons ceci :
-
-----
-private List<GroupeTP> getGroupesTP() {
-	List<GroupeTP> groupesTP = Exemple1GroupeTPController.getAll();
-	groupesTP.add(0, new GroupeTP(null, null, null));
-	return groupesTP;
-}
-----
-
-si, au lieu d'appeler `Exemple1GroupeTPController.getAll()` nous avions utilisé `new ArrayList<>(GroupeTP.LISTE)` (utilisation directe de la partie modèle, donc), tout aurait fonctionné sans le moindre souci.
-
-Nous allons donc voir un cas - techniquement un peu plus complexe - dans lequel l'existence de la partie contrôleur est indispensable.
 
 [NOTE]
 ====
@@ -150,7 +153,7 @@ Cet exemple contient du Java hors programme (l'utilisation du framework Spring-B
 
 ==== Intégralité de l'application
 
-=== Imaginer plus loin - Une application Java / Mobile
+=== Imaginer plus loin - Une solution multi-plateformes
 
 ==== La partie "modèle"
 
