@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -18,17 +19,21 @@ import javax.swing.JTextField;
 import org.blagnac.coo.mvcexample.model.GroupeTP;
 
 /**
- * En-tete de la fenetre
+ * Formulaire de recherche
  */
-public class EnTete extends JPanel {
+public class FormRecherche extends JPanel {
 
 	private static final long serialVersionUID = 8805692934172868767L;
 
+	private static final String RECHERCHE_LABEL = "RECHERCHE";
 	private static final String NOM_LABEL = "Nom";
 	private static final String PRENOM_LABEL = "Prenom";
 	private static final String GROUPE_TP_LABEL = "Groupe de TP";
 	private static final String RECHERCHER_LABEL = "Rechercher";
 	private static final String AFFICHER_TOUT_LABEL = "Afficher tout";
+
+	private static final int LARGEUR_FORMULAIRE = 950;
+	private static final int HAUTEUR_FORMULAIRE = 60;
 
 	private static final int LARGEUR_CHAMPS_RECHERCHE = 100;
 	private static final int HAUTEUR_CHAMPS_RECHERCHE = 25;
@@ -50,11 +55,13 @@ public class EnTete extends JPanel {
 	 * 
 	 * @param tableau le tableau
 	 */
-	public EnTete(Tableau tableau) {
+	public FormRecherche(Tableau tableau) {
 		this.tableau = tableau;
 
-		// Parametrage de l'en-tete
+		// Parametrage du formulaire
+		setPreferredSize(new Dimension(LARGEUR_FORMULAIRE, HAUTEUR_FORMULAIRE));
 		setLayout(new FlowLayout(FlowLayout.CENTER));
+		setBorder(BorderFactory.createTitledBorder(RECHERCHE_LABEL));
 
 		// Ajout des composants (labels, champs de saisie, boutons)
 		add(new JLabel(NOM_LABEL + " :"));
@@ -69,7 +76,7 @@ public class EnTete extends JPanel {
 
 		add(new JLabel(GROUPE_TP_LABEL + " :"));
 		inputRechercheGroupeTP = new JComboBox<>();
-		inputRechercheGroupeTP.setModel(new GroupeTPComboBoxModel(getGroupesTP()));
+		inputRechercheGroupeTP.setModel(new GroupeTPComboBoxModel());
 		add(inputRechercheGroupeTP);
 
 		btRechercher = new JButton(RECHERCHER_LABEL);
@@ -83,19 +90,6 @@ public class EnTete extends JPanel {
 		// Gestion du clic sur les boutons
 		onClickBtRechercher();
 		onClickBtAfficherTout();
-	}
-
-	/**
-	 * Recuperation de la liste des identifiants des groupes de TP, pour la ComboBox
-	 * (avec une valeur vide en premier)
-	 * 
-	 * @return la liste des identifiants des groupes de TP
-	 */
-	private List<GroupeTP> getGroupesTP() {
-		List<GroupeTP> groupesTP = new ArrayList<>(GroupeTP.LISTE);
-		// Ajout d'un element vide destine a la premiere position de la ComboBox
-		groupesTP.add(0, new GroupeTP(null, null, null));
-		return groupesTP;
 	}
 
 	/**
@@ -144,8 +138,24 @@ public class EnTete extends JPanel {
 		/**
 		 * Constructeur
 		 */
-		public GroupeTPComboBoxModel(List<GroupeTP> groupesTP) {
-			super(new Vector<GroupeTP>(groupesTP));
+		public GroupeTPComboBoxModel() {
+			super(new Vector<GroupeTP>(getGroupesTP()));
+		}
+
+		/**
+		 * Recuperation de la liste des identifiants des groupes de TP (avec une valeur
+		 * vide en premier)
+		 * 
+		 * @return la liste des groupes de TP
+		 */
+		private static List<GroupeTP> getGroupesTP() {
+			// Recuperation de la liste des groupes de TP aupres du modele
+			List<GroupeTP> groupesTP = new ArrayList<>(GroupeTP.LISTE);
+
+			// Ajout d'un element vide destine a la premiere position de la ComboBox
+			groupesTP.add(0, new GroupeTP(null, null, null));
+
+			return groupesTP;
 		}
 	}
 }

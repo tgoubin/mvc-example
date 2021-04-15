@@ -19,8 +19,8 @@ public class Tableau extends JPanel {
 
 	private static final long serialVersionUID = 6782929412739429045L;
 
-	private static final int LARGEUR_TABLEAU = 900;
-	private static final int HAUTEUR_TABLEAU = 480;
+	private static final int LARGEUR_TABLEAU = 950;
+	private static final int HAUTEUR_TABLEAU = 550;
 
 	private JTable tableauEtudiants;
 
@@ -48,6 +48,7 @@ public class Tableau extends JPanel {
 	public void majTableau(String nom, String prenom, String identifiantGroupeTP) {
 		TableauEtudiantsModel tableauEtudiantsModel = (TableauEtudiantsModel) tableauEtudiants.getModel();
 
+		// Recuperation de la liste des etudiants aupres du modele
 		if (nom == null && prenom == null && identifiantGroupeTP == null) {
 			// Aucun filtrage
 			tableauEtudiantsModel.setEtudiants(Etudiant.getAll());

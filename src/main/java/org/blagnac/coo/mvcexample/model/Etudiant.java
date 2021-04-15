@@ -94,6 +94,17 @@ public class Etudiant implements Serializable {
 	}
 
 	/**
+	 * Surcharge de la methode 'toString()' pour afficher correctement un etudiant
+	 */
+	@Override
+	public String toString() {
+		if (identifiant == null) {
+			return "";
+		}
+		return nom + " " + prenom + " - " + groupeTP.toString();
+	}
+
+	/**
 	 * Chargement de tous les etudiants
 	 */
 	@SuppressWarnings("deprecation")
@@ -133,7 +144,7 @@ public class Etudiant implements Serializable {
 	public static List<Etudiant> getAll() {
 		// On copie la liste d'etudiants pour pouvoir la trier, sans impacter les
 		// donnees initiales (Etudiant.LISTE)
-		List<Etudiant> etudiants = new ArrayList<>(Etudiant.LISTE);
+		List<Etudiant> etudiants = new ArrayList<>(LISTE);
 
 		// Tri par nom, puis par prenom
 		etudiants.sort(Comparator.comparing(Etudiant::getNom).thenComparing(Etudiant::getPrenom));
@@ -174,5 +185,45 @@ public class Etudiant implements Serializable {
 		}
 
 		return etudiants;
+	}
+
+	/**
+	 * Creation d'un etudiant
+	 * 
+	 * @param nom      le nom
+	 * @param prenom   le prenom
+	 * @param groupeTP le groupe de TP
+	 * @return l'etudiant ajoute
+	 */
+	public static Etudiant create(String nom, String prenom, GroupeTP groupeTP) {
+		Etudiant etudiant = new Etudiant(String.valueOf(LISTE.size() + 1), nom, prenom, groupeTP);
+		LISTE.add(etudiant);
+		return etudiant;
+	}
+
+	/**
+	 * Modification d'un etudiant
+	 * 
+	 * @param identifiant l'identifiant de l'etudiant a modifier
+	 * @param nom         le nom
+	 * @param prenom      le prenom
+	 * @param groupeTP    le groupe de TP
+	 * @return l'etudiant modifie
+	 */
+	public static Etudiant update(String identifiant, String nom, String prenom, GroupeTP groupeTP) {
+		Etudiant etudiant = LISTE.stream().filter(e -> e.getIdentifiant().equals(identifiant)).findFirst().get();
+		etudiant.setNom(nom);
+		etudiant.setPrenom(prenom);
+		etudiant.setGroupeTP(groupeTP);
+		return etudiant;
+	}
+
+	/**
+	 * Suppression d'un etudiant
+	 * 
+	 * @param identifiant
+	 */
+	public static void delete(String identifiant) {
+		LISTE.removeIf(e -> e.getIdentifiant().equals(identifiant));
 	}
 }

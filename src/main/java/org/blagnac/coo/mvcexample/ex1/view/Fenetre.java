@@ -17,7 +17,7 @@ public class Fenetre extends JFrame {
 	private static final String TITRE = "Liste des etudiants";
 
 	private static final int LARGEUR = 1000;
-	private static final int HAUTEUR = 600;
+	private static final int HAUTEUR = 800;
 
 	/**
 	 * Constructeur
@@ -34,7 +34,7 @@ public class Fenetre extends JFrame {
 		setContentPane(panelPrincipal);
 		Tableau tableau = new Tableau();
 		panelPrincipal.add(tableau, BorderLayout.CENTER);
-		panelPrincipal.add(new EnTete(tableau), BorderLayout.NORTH);
+		panelPrincipal.add(new Formulaires(tableau), BorderLayout.NORTH);
 
 		// Affichage de la fenetre
 		setVisible(true);
