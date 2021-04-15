@@ -122,7 +122,7 @@ public class FormActions extends JPanel {
 								// Mise a jour des listes des etudiants
 								majListesEtudiants();
 
-								// Affichage d'un message de confirmation de suppression
+								// Affichage d'un message de confirmation de creation
 								JOptionPane.showMessageDialog(getParent(),
 										ETUDIANT_AJOUTE_SUCCES_LABEL + " '" + etudiant.getIdentifiant() + "'", null,
 										JOptionPane.INFORMATION_MESSAGE);
@@ -170,16 +170,15 @@ public class FormActions extends JPanel {
 							if (groupeTP != null) {
 								try {
 									// Passage par le controleur pour ajouter l'etudiant
-									Etudiant etudiant = Exemple1EtudiantController.updateEtudiant(
-											etudiantSelectionne.getIdentifiant(), nom, prenom, groupeTP);
+									Exemple1EtudiantController.updateEtudiant(etudiantSelectionne.getIdentifiant(), nom,
+											prenom, groupeTP);
 
 									// Mise a jour des listes des etudiants
 									majListesEtudiants();
 
-									// Affichage d'un message de confirmation de suppression
-									JOptionPane.showMessageDialog(getParent(),
-											ETUDIANT_MODIFIE_SUCCES_LABEL + " '" + etudiant.getIdentifiant() + "'",
-											null, JOptionPane.INFORMATION_MESSAGE);
+									// Affichage d'un message de confirmation de modification
+									JOptionPane.showMessageDialog(getParent(), ETUDIANT_MODIFIE_SUCCES_LABEL, null,
+											JOptionPane.INFORMATION_MESSAGE);
 								} catch (Exception exc) {
 									// Affichage d'une erreur fonctionnelle eventuellement renvoyee par
 									// le controller

@@ -12,8 +12,6 @@ public class Fenetre extends JFrame {
 
 	private static final long serialVersionUID = -2292399880668479643L;
 
-	private JPanel panelPrincipal;
-
 	private static final String TITRE = "Liste des etudiants";
 
 	private static final int LARGEUR = 1000;
@@ -30,7 +28,7 @@ public class Fenetre extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		// Ajout du panel principal
-		panelPrincipal = new JPanel(new BorderLayout());
+		JPanel panelPrincipal = new JPanel(new BorderLayout());
 		setContentPane(panelPrincipal);
 		Tableau tableau = new Tableau();
 		panelPrincipal.add(tableau, BorderLayout.CENTER);

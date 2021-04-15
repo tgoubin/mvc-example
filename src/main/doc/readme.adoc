@@ -48,9 +48,13 @@ Cette partie contient l'ensemble des éléments qui permettent de contrôler les
 
 *L'intérêt de l'utilisation de ce modèle ?*
 
-* construire son application de manière organisée
-* faciliter sa maintenance
-* permettre la conception d'applications "multi-tiers" (voir exemple 2)
+* construire son application de manière organisée, en définissant les rôles de chaque composant
+** un élément de la vue doit uniquement afficher et intéragir avec l'utilisateur
+** un élément du contrôleur doit uniquement traiter (souvent vérifier) les données qui transitent vers le modèle
+** un élément du modèle doit structurer et permettre le stockage des données
+* faciliter la maintenance de son application
+** plus l'organisation est respectée, plus un problème sera rapide à investiguer
+* permettre la conception d'applications "multi-tiers" ou "multi-plateformes"
 
 == Un cas concret : une application simple d'affichage des étudiants
 
@@ -174,8 +178,11 @@ folder "src/main/java" {
             + get...()
             + set...(...)
             + {static} loadEtudiants()
-            + {static} getAll()
-            + {static} getBy(String nom, String prenom, String identifiantGroupeTP)
+            + {static} getAll(): List<Etudiant>
+            + {static} getBy(String nom, String prenom, String identifiantGroupeTP): List<Etudiant>
+            + {static} create(String nom, String prenom, GroupeTP groupeTP): Etudiant
+            + {static} update(String identifiant, String nom, String prenom, GroupeTP groupeTP): Etudiant
+            + {static} delete(String identifiant)
         }
         
         class GroupeTP {
@@ -231,7 +238,49 @@ GroupeTD --> groupesTD.csv: Lecture du fichier CSV
 ----
 @startuml
 
+package vue {
 
+	package javax.swing {
+		class JFrame
+		class JPanel
+	}
+	
+	package org.blagnac.coo.mvcexample.ex1.view {
+		class Fenetre
+		class Formulaires
+		class Tableau
+		class FormRecherche
+		class FormActions
+	}
+}
+
+package org.blagnac.coo.mvcexample.model {
+    class Etudiant
+    class GroupeTP
+}
+
+package org.blagnac.coo.mvcexample.ex1.controller {
+}
+
+Fenetre --|> JFrame
+Formulaires --|> JPanel
+Tableau --|> JPanel
+FormRecherche --|> JPanel
+FormActions --|> JPanel
+
+Fenetre --> Formulaires: construit
+Fenetre --> Tableau: construit
+Formulaires --> FormRecherche: construit
+Formulaires --> FormActions: construit
+FormRecherche --> Tableau: utilise
+FormActions --> Tableau: utilise
+
+FormRecherche --> GroupeTP: utilise
+FormActions --> GroupeTP: utilise
+FormActions --> Etudiant: utilise
+FormActions --> org.blagnac.coo.mvcexample.ex1.controller: utilise
+Tableau --> Etudiant: utilise
+org.blagnac.coo.mvcexample.ex1.controller --> Etudiant: utilise
 
 @enduml
 ----
@@ -239,7 +288,9 @@ GroupeTD --> groupesTD.csv: Lecture du fichier CSV
 Les classes du modèle sont dans le package `org.blagnac.coo.mvcexample.ex1.view` :
 
 * `Fenetre.java` : la classe qui permet l'affichage de la fenêtre principale de l'application
-* `EnTete.java` : la classe qui permet l'affichage des filtres de recherche et des boutons
+* `Formulaires.java` : la classe qui permet l'affichage des deux formulaires (recherche et actions)
+* `FormRecherche.java` : la classe qui permet l'affichage du formulaire de recherche d'étudiants
+* `FormActions.java` : la classe qui permet l'affichage du formulaire de création / modification / suppression d'étudiant
 * `Tableau.java` : la classe qui permet l'affichage du tableau des étudiants
 
 ===== Intéractions avec le modèle et le contrôleur
@@ -247,14 +298,19 @@ Les classes du modèle sont dans le package `org.blagnac.coo.mvcexample.ex1.view
 A plusieurs endroits, des éléments de l'IHM ont besoin d'utiliser des données du modèle :
 
 * en lecture :
-** la liste déroulante pour filtrer par groupe de TP : `EnTete > getGroupesTP()`
+** la liste déroulante pour filtrer par groupe de TP : `FormRecherche > getGroupesTP()`
+** la liste déroulante des étudiants, pour sélectionner qui modifier / supprimer : `FormActions.EtudiantComboBoxModel > getEtudiants()`
+** la liste déroulante pour sélectionner le groupe de TP associé à l'étudiant à modifier / supprimer : `FormActions > onClickBtAjouterEtudiant() / onClickBtModifierEtudiant`
 ** le tableau des étudiants : `Tableau > majTableau(...)`
 
 *Dans ce cas, la vue peut accéder directement au modèle, ce qu'elle fait par l'utilisation de `Etudiant.getAll()`, `Etudiant.getBy(...)` et `GroupeTP.LISTE`*.
 
 * en écriture :
+** la création d'un étudiant : `FormActions > onClickBtAjouterEtudiant()`
+** la modification d'un étudiant : `FormActions > onClickBtModifierEtudiant()`
+** la suppression d'un étudiant : `FormActions > onClickBtSupprimerEtudiant()`
 
-*Dans ce cas, un contrôleur doit donc intervenir, pour faire transiter les données à ajouter / modifier / supprimer entre la vue (l'IHM) et le modèle (les données).*
+*Dans ce cas, un contrôleur doit donc intervenir, pour faire vérifier les données à ajouter / modifier / supprimer puis les faire transiter vers le modèle.*
 
 ==== La partie "contrôleur"
 
@@ -262,7 +318,21 @@ A plusieurs endroits, des éléments de l'IHM ont besoin d'utiliser des données
 ----
 @startuml
 
+package org.blagnac.coo.mvcexample.ex1.controller {
+	class Exemple1EtudiantController {
+		+ {static} createEtudiant(String nom, String prenom, GroupeTP groupeTP): Etudiant
+		+ {static} updateEtudiant(String identifiant, String nom, String prenom, GroupeTP groupeTP): Etudiant
+		+ {static} deleteEtudiant(String identifiant)
+	}
+}
 
+package org.blagnac.coo.mvcexample.model {
+    class Etudiant
+}
+
+Exemple1EtudiantController --> Etudiant: create(nom, prenom, groupeTP)
+Exemple1EtudiantController --> Etudiant: update(identifiant, nom, prenom, groupeTP)
+Exemple1EtudiantController --> Etudiant: delete(identifiant)
 
 @enduml
 ----
@@ -270,9 +340,9 @@ A plusieurs endroits, des éléments de l'IHM ont besoin d'utiliser des données
 Les classes du modèle sont dans le package `org.blagnac.coo.mvcexample.ex1.controller` :
 
 * `Exemple1EtudiantController.java` : le contrôleur qui concerne les étudiants
-** méthode `create()` : ajout d'un étudiant
-** méthode `update()` : modification d'un étudiant
-** méthode `delete()` : suppression d'un étudiant
+** méthode `createEtudiant()` : appel de `Etudiant.create(...)`, après avoir effectué des contrôles métiers
+** méthode `updateEtudiant()` : appel de `Etudiant.update(...)`, après avoir effectué des contrôles métiers
+** méthode `deleteEtudiant()` : appel de `Etudiant.delete(...)`, après avoir effectué des contrôles métiers
 
 ==== Intégralité de l'application
 
