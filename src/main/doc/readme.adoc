@@ -97,31 +97,33 @@ Les classes du modèle sont dans le package `org.blagnac.coo.mvcexample.model` :
 ----
 @startuml
 
-package org.blagnac.coo.mvcexample.model {
-    class Etudiant {
-        - identifiant: String
-        - nom: String
-        - prenom: String
-        - groupeTP: GroupeTP
-        + get...()
-        + set...(...)
-    }
-    
-    class GroupeTP {
-        - identifiant: String
-        - groupeTD: GroupeTD
-        - groupe: Character
-        + get...()
-        + set...(...)
-    }
-    
-    class GroupeTD {
-        - identifiant: String
-        - annee: int
-        - numero: int
-        + get...()
-        + set...(...)
-    }
+folder modele {
+	package org.blagnac.coo.mvcexample.model {
+	    class Etudiant {
+	        - identifiant: String
+	        - nom: String
+	        - prenom: String
+	        - groupeTP: GroupeTP
+	        + get...()
+	        + set...(...)
+	    }
+	    
+	    class GroupeTP {
+	        - identifiant: String
+	        - groupeTD: GroupeTD
+	        - groupe: Character
+	        + get...()
+	        + set...(...)
+	    }
+	    
+	    class GroupeTD {
+	        - identifiant: String
+	        - annee: int
+	        - numero: int
+	        + get...()
+	        + set...(...)
+	    }
+	}
 }
 
 Etudiant "1..*" -- "1" GroupeTP
@@ -143,6 +145,11 @@ Pour simplifier, nous utilisons donc les fichiers CSV suivants, en guise de stoc
 * `src/main/resources/etudiants.csv` : liste des étudiants (colonnes nom, prénom, groupe de TP associé)
 
 Au lancement de l'application, les données sont chargées dans des variables statiques, accessibles dès lors depuis n'importe quelle classe. Ce processus a lieu dans `org.blagnac.coo.mvcexample.controller.MainController > loadData()`, et est appelé depuis la classe principale.
+
+[NOTE]
+====
+Nous pouvons considérer la classe `MainController` comme se trouvant dans la partie contrôleur.
+====
 
 Nous allons donc ajouter aux classes du modèle des méthodes statiques de chargement (à partir de la lecture des fichiers CSV) et d'accès aux données (avec potentiellement du tri, du filtrage, etc...).
 
@@ -238,8 +245,7 @@ GroupeTD --> groupesTD.csv: Lecture du fichier CSV
 ----
 @startuml
 
-package vue {
-
+folder vue {
 	package javax.swing {
 		class JFrame
 		class JPanel
@@ -254,12 +260,16 @@ package vue {
 	}
 }
 
-package org.blagnac.coo.mvcexample.model {
-    class Etudiant
-    class GroupeTP
+folder modele {
+	package org.blagnac.coo.mvcexample.model {
+	    class Etudiant
+	    class GroupeTP
+	}
 }
 
-package org.blagnac.coo.mvcexample.ex1.controller {
+folder controleur {
+	package org.blagnac.coo.mvcexample.ex1.controller {
+	}
 }
 
 Fenetre --|> JFrame
@@ -318,16 +328,20 @@ A plusieurs endroits, des éléments de l'IHM ont besoin d'utiliser des données
 ----
 @startuml
 
-package org.blagnac.coo.mvcexample.ex1.controller {
-	class Exemple1EtudiantController {
-		+ {static} createEtudiant(String nom, String prenom, GroupeTP groupeTP): Etudiant
-		+ {static} updateEtudiant(String identifiant, String nom, String prenom, GroupeTP groupeTP): Etudiant
-		+ {static} deleteEtudiant(String identifiant)
+folder controleur {
+	package org.blagnac.coo.mvcexample.ex1.controller {
+		class Exemple1EtudiantController {
+			+ {static} createEtudiant(String nom, String prenom, GroupeTP groupeTP): Etudiant
+			+ {static} updateEtudiant(String identifiant, String nom, String prenom, GroupeTP groupeTP): Etudiant
+			+ {static} deleteEtudiant(String identifiant)
+		}
 	}
 }
 
-package org.blagnac.coo.mvcexample.model {
-    class Etudiant
+folder controleur {
+	package org.blagnac.coo.mvcexample.model {
+	    class Etudiant
+	}
 }
 
 Exemple1EtudiantController --> Etudiant: create(nom, prenom, groupeTP)
@@ -345,6 +359,109 @@ Les classes du modèle sont dans le package `org.blagnac.coo.mvcexample.ex1.cont
 ** méthode `deleteEtudiant()` : appel de `Etudiant.delete(...)`, après avoir effectué des contrôles métiers
 
 ==== Intégralité de l'application
+
+[plantuml, "ex1", png]  
+----
+@startuml
+
+folder Application {
+	package org.blagnac.coo.mvcexample.ex1 {
+	    class Exemple1Application {
+	        + {static} main(String[] args)
+	    }
+	}
+}
+
+folder vue {
+	package org.blagnac.coo.mvcexample.ex1.view {
+		class Fenetre
+		class Formulaires
+		class Tableau
+		class FormRecherche
+		class FormActions
+	}
+}
+
+folder controleur {
+	package org.blagnac.coo.mvcexample.ex1.controller {
+		class Exemple1EtudiantController {
+			+ {static} createEtudiant(String nom, String prenom, GroupeTP groupeTP): Etudiant
+			+ {static} updateEtudiant(String identifiant, String nom, String prenom, GroupeTP groupeTP): Etudiant
+			+ {static} deleteEtudiant(String identifiant)
+		}
+	}
+	
+	package org.blagnac.coo.mvcexample.controller {
+	    class MainController {
+	        + {static} loadData()
+	    }
+	}
+}
+
+folder modele {
+	package org.blagnac.coo.mvcexample.model {
+	    class Etudiant {
+	        - identifiant: String
+	        - nom: String
+	        - prenom: String
+	        - groupeTP: GroupeTP
+	        - {static} LISTE: List<Etudiant>
+	        + get...()
+	        + set...(...)
+	        + {static} loadEtudiants()
+	        + {static} getAll(): List<Etudiant>
+	        + {static} getBy(String nom, String prenom, String identifiantGroupeTP): List<Etudiant>
+	        + {static} create(String nom, String prenom, GroupeTP groupeTP): Etudiant
+	        + {static} update(String identifiant, String nom, String prenom, GroupeTP groupeTP): Etudiant
+	        + {static} delete(String identifiant)
+	    }
+	    
+	    class GroupeTP {
+	        - identifiant: String
+	        - groupeTD: GroupeTD
+	        - groupe: Character
+	        - {static} LISTE: List<GroupeTP>
+	        + get...()
+	        + set...(...)
+	        + {static} loadGroupesTP()
+	    }
+	    
+	    class GroupeTD {
+	        - identifiant: String
+	        - annee: int
+	        - numero: int
+	        - {static} LISTE: List<GroupeTD>
+	        + get...()
+	        + set...(...)
+	        + {static} loadGroupesTD()
+	    }
+	}
+}
+
+Fenetre --> Formulaires
+Fenetre --> Tableau
+Formulaires --> FormRecherche
+Formulaires --> FormActions
+FormRecherche --> Tableau
+FormActions --> Tableau
+
+FormRecherche --> GroupeTP
+FormActions --> GroupeTP
+FormActions --> Etudiant
+FormActions --> Exemple1EtudiantController
+Tableau --> Etudiant
+Exemple1EtudiantController --> Etudiant
+
+Etudiant "1..*" -- "1" GroupeTP
+GroupeTP "1..2" -- "1" GroupeTD
+
+Exemple1Application --> MainController
+MainController -> Etudiant
+MainController -> GroupeTP
+MainController -> GroupeTD
+
+@enduml
+----
 
 === Exemple 2 - Une application Java / Web
 
