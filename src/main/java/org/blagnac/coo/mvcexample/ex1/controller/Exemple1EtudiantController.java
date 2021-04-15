@@ -22,17 +22,23 @@ public class Exemple1EtudiantController {
 
 		// Le nom ne peut pas etre vide ou nul
 		if (nom == null || "".equals(nom.trim())) {
-			throw new Exception("Le nom de l'etudiant ne peut pas etre nul");
+			String erreur = "Le nom de l'etudiant ne peut pas etre nul";
+			System.err.println(erreur);
+			throw new Exception(erreur);
 		}
 
 		// Le prenom ne peut pas etre vide ou nul
 		if (prenom == null || "".equals(prenom.trim())) {
-			throw new Exception("Le prenom de l'etudiant ne peut pas etre nul");
+			String erreur = "Le prenom de l'etudiant ne peut pas etre nul";
+			System.err.println(erreur);
+			throw new Exception(erreur);
 		}
 
 		// Le groupe de TP ne peut pas etre nul
 		if (groupeTP == null) {
-			throw new Exception("Le groupe de TP de l'etudiant ne peut pas etre nul");
+			String erreur = "Le groupe de TP de l'etudiant ne peut pas etre nul";
+			System.err.println(erreur);
+			throw new Exception(erreur);
 		}
 
 		return Etudiant.create(nom.trim(), prenom.trim(), groupeTP);
@@ -55,23 +61,30 @@ public class Exemple1EtudiantController {
 		// La liste des etudiants doit contenir un etudiant ayant l'identifiant passe en
 		// parametre
 		if (!Etudiant.LISTE.stream().filter(e -> e.getIdentifiant().equals(identifiant)).findFirst().isPresent()) {
-			throw new Exception(
-					"La liste ne contient pas d'etudiant correspondant a l'identifiant '" + identifiant + "'");
+			String erreur = "La liste ne contient pas d'etudiant correspondant a l'identifiant '" + identifiant + "'";
+			System.err.println(erreur);
+			throw new Exception(erreur);
 		}
 
 		// Le nom ne peut pas etre vide ou nul
 		if (nom == null || "".equals(nom.trim())) {
-			throw new Exception("Le nom de l'etudiant ne peut pas etre nul");
+			String erreur = "Le nom de l'etudiant ne peut pas etre nul";
+			System.err.println(erreur);
+			throw new Exception(erreur);
 		}
 
 		// Le prenom ne peut pas etre vide ou nul
 		if (prenom == null || "".equals(prenom.trim())) {
-			throw new Exception("Le prenom de l'etudiant ne peut pas etre nul");
+			String erreur = "Le prenom de l'etudiant ne peut pas etre nul";
+			System.err.println(erreur);
+			throw new Exception(erreur);
 		}
 
 		// Le groupe de TP ne peut pas etre nul
 		if (groupeTP == null) {
-			throw new Exception("Le groupe de TP de l'etudiant ne peut pas etre nul");
+			String erreur = "Le groupe de TP de l'etudiant ne peut pas etre nul";
+			System.err.println(erreur);
+			throw new Exception(erreur);
 		}
 
 		return Etudiant.update(identifiant, nom.trim(), prenom.trim(), groupeTP);
@@ -88,14 +101,17 @@ public class Exemple1EtudiantController {
 
 		// L'identifiant ne peut pas etre nul
 		if (identifiant == null) {
-			throw new Exception("L'identifiant de l'etudiant ne peut pas etre nul");
+			String erreur = "L'identifiant de l'etudiant ne peut pas etre nul";
+			System.err.println(erreur);
+			throw new Exception(erreur);
 		}
 
 		// La liste des etudiants doit contenir un etudiant ayant l'identifiant passe en
 		// parametre
 		if (!Etudiant.LISTE.stream().filter(e -> e.getIdentifiant().equals(identifiant)).findFirst().isPresent()) {
-			throw new Exception(
-					"La liste ne contient pas d'etudiant correspondant a l'identifiant '" + identifiant + "'");
+			String erreur = "La liste ne contient pas d'etudiant correspondant a l'identifiant '" + identifiant + "'";
+			System.err.println(erreur);
+			throw new Exception(erreur);
 		}
 
 		Etudiant.delete(identifiant);
