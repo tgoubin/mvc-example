@@ -21,12 +21,12 @@ public class Exemple2GroupeTPController {
 	/**
 	 * Recuperation des groupes de TP depuis le modele
 	 * 
-	 * URL complete : GET /groupetp/ (RequestMapping de la classe + RequestMapping
-	 * de la methode)
+	 * URL complete : GET /groupetp (RequestMapping de la classe + RequestMapping de
+	 * la methode)
 	 * 
 	 * @return les groupes de TP
 	 */
-	@RequestMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+	@RequestMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
 	public ResponseEntity<List<GroupeTP>> getAll() {
 		return new ResponseEntity<List<GroupeTP>>(GroupeTP.LISTE, HttpStatus.OK);
 	}

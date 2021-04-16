@@ -14,23 +14,30 @@ h2 {
 	margin-left: 20px;
 }
 
+input, button, select {
+	font-size: 16px;
+	height: 25px;
+}
+
 #recherche, #actions {
 	margin-left: 20px;
+	font-size: 18px;
 }
 
 #recherche input, #recherche button {
 	width: 100px;
-	height: 25px;
 }
 
 #recherche select {
-	width: 150px;
-	height: 25px;
+	width: 170px;
 }
 
 #actions button {
 	width: 150px;
-	height: 25px;
+}
+
+#actions select {
+	width: 300px;
 }
 
 #tableau {
