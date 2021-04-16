@@ -20,26 +20,8 @@ public class Exemple1EtudiantController {
 	public static Etudiant createEtudiant(String nom, String prenom, GroupeTP groupeTP) throws Exception {
 		System.out.println("Ajout de l'etudiant 'nom=" + nom + ", prenom=" + prenom + ", groupeTP=" + groupeTP + "'");
 
-		// Le nom ne peut pas etre vide ou nul
-		if (nom == null || "".equals(nom.trim())) {
-			String erreur = "Le nom de l'etudiant ne peut pas etre nul";
-			System.err.println(erreur);
-			throw new Exception(erreur);
-		}
-
-		// Le prenom ne peut pas etre vide ou nul
-		if (prenom == null || "".equals(prenom.trim())) {
-			String erreur = "Le prenom de l'etudiant ne peut pas etre nul";
-			System.err.println(erreur);
-			throw new Exception(erreur);
-		}
-
-		// Le groupe de TP ne peut pas etre nul
-		if (groupeTP == null) {
-			String erreur = "Le groupe de TP de l'etudiant ne peut pas etre nul";
-			System.err.println(erreur);
-			throw new Exception(erreur);
-		}
+		// Verification des parametres
+		checkCreateOrUpdateFields(nom, prenom, groupeTP);
 
 		return Etudiant.create(nom.trim(), prenom.trim(), groupeTP);
 	}
@@ -58,14 +40,24 @@ public class Exemple1EtudiantController {
 			throws Exception {
 		System.out.println("Modification de l'etudiant 'identifiant=" + identifiant + "'");
 
-		// La liste des etudiants doit contenir un etudiant ayant l'identifiant passe en
-		// parametre
-		if (!Etudiant.LISTE.stream().filter(e -> e.getIdentifiant().equals(identifiant)).findFirst().isPresent()) {
-			String erreur = "La liste ne contient pas d'etudiant correspondant a l'identifiant '" + identifiant + "'";
-			System.err.println(erreur);
-			throw new Exception(erreur);
-		}
+		// Verification de l'identifiant
+		checkIdentifiant(identifiant);
 
+		// Verification des autres parametres
+		checkCreateOrUpdateFields(nom, prenom, groupeTP);
+
+		return Etudiant.update(identifiant, nom.trim(), prenom.trim(), groupeTP);
+	}
+
+	/**
+	 * Verification des champs pour une creation ou une modification
+	 * 
+	 * @param nom      le nom
+	 * @param prenom   le prenom
+	 * @param groupeTP le groupe de TP
+	 * @throws Exception une exception fonctionnelle
+	 */
+	private static void checkCreateOrUpdateFields(String nom, String prenom, GroupeTP groupeTP) throws Exception {
 		// Le nom ne peut pas etre vide ou nul
 		if (nom == null || "".equals(nom.trim())) {
 			String erreur = "Le nom de l'etudiant ne peut pas etre nul";
@@ -86,8 +78,6 @@ public class Exemple1EtudiantController {
 			System.err.println(erreur);
 			throw new Exception(erreur);
 		}
-
-		return Etudiant.update(identifiant, nom.trim(), prenom.trim(), groupeTP);
 	}
 
 	/**
@@ -99,6 +89,19 @@ public class Exemple1EtudiantController {
 	public static void deleteEtudiant(String identifiant) throws Exception {
 		System.out.println("Suppression de l'etudiant 'identifiant=" + identifiant + "'");
 
+		// Verification de l'identifiant
+		checkIdentifiant(identifiant);
+
+		Etudiant.delete(identifiant);
+	}
+
+	/**
+	 * Verification de l'identifiant passe en parametre
+	 * 
+	 * @param identifiant l'identifiant
+	 * @throws Exception
+	 */
+	private static void checkIdentifiant(String identifiant) throws Exception {
 		// L'identifiant ne peut pas etre nul
 		if (identifiant == null) {
 			String erreur = "L'identifiant de l'etudiant ne peut pas etre nul";
@@ -113,7 +116,5 @@ public class Exemple1EtudiantController {
 			System.err.println(erreur);
 			throw new Exception(erreur);
 		}
-
-		Etudiant.delete(identifiant);
 	}
 }
