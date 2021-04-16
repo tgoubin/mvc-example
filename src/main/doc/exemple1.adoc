@@ -26,7 +26,7 @@ Les classes du modèle sont dans le package `org.blagnac.coo.mvcexample.model` :
 ----
 @startuml
 
-folder modele {
+folder modèle {
 	package org.blagnac.coo.mvcexample.model {
 	    class Etudiant {
 	        - identifiant: String
@@ -189,14 +189,14 @@ folder vue {
 	}
 }
 
-folder modele {
+folder modèle {
 	package org.blagnac.coo.mvcexample.model {
 	    class Etudiant
 	    class GroupeTP
 	}
 }
 
-folder controleur {
+folder contrôleur {
 	package org.blagnac.coo.mvcexample.ex1.controller {
 	}
 }
@@ -257,7 +257,7 @@ A plusieurs endroits, des éléments de l'IHM ont besoin d'utiliser des données
 ----
 @startuml
 
-folder controleur {
+folder contrôleur {
 	package org.blagnac.coo.mvcexample.ex1.controller {
 		class Exemple1EtudiantController {
 			+ {static} createEtudiant(String nom, String prenom, GroupeTP groupeTP): Etudiant
@@ -267,7 +267,7 @@ folder controleur {
 	}
 }
 
-folder modele {
+folder modèle {
 	package org.blagnac.coo.mvcexample.model {
 	    class Etudiant
 	}
@@ -311,7 +311,7 @@ folder vue {
 	}
 }
 
-folder controleur {
+folder contrôleur {
 	package org.blagnac.coo.mvcexample.ex1.controller {
 		class Exemple1EtudiantController {
 			+ {static} createEtudiant(String nom, String prenom, GroupeTP groupeTP): Etudiant
@@ -327,7 +327,7 @@ folder controleur {
 	}
 }
 
-folder modele {
+folder modèle {
 	package org.blagnac.coo.mvcexample.model {
 	    class Etudiant {
 	        - identifiant: String

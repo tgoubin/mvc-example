@@ -81,14 +81,14 @@ folder vue {
 	}
 }
 
-folder modele {
+folder modèle {
 	package org.blagnac.coo.mvcexample.model {
 	    class Etudiant
 	    class GroupeTP
 	}
 }
 
-folder controleur {
+folder contrôleur {
 	package org.blagnac.coo.mvcexample.ex2.controller {
 	}
 }
@@ -137,7 +137,7 @@ Nous obtenons donc un modèle MVC plus "strict" :
 @startuml
 
 folder "API Java" {
-	package modele
+	package modèle
 	package contrôleur
 }
 
@@ -146,7 +146,7 @@ folder "Page web" {
 }
 
 vue -> contrôleur: HTTP
-contrôleur -> modele: Java
+contrôleur -> modèle: Java
 
 @enduml
 ----
@@ -167,23 +167,26 @@ L'accès à un service se définit avec :
 
 === Définition des contrôleurs
 
-[plantuml, "ex1-controleur", png]  
+[plantuml, "ex2-controleur", png]  
 ----
 @startuml
 
-folder controleur {
+folder contrôleur {
 	package org.blagnac.coo.mvcexample.ex2.controller {
 		class Exemple2EtudiantController {
-			
+			+ get(String nom, String prenom, String identifiantGroupeTP): ResponseEntity<List<Etudiant>>
+			+ create(Etudiant etudiant): ResponseEntity<?>
+			+ update(String identifiant, Etudiant etudiant): ResponseEntity<?>
+			+ delete(String identifiant): ResponseEntity<?>
 		}
 		
 		class Exemple2GroupeTPController {
-			
+			+ getAll(): ResponseEntity<List<GroupeTP>>
 		}
 	}
 }
 
-folder modele {
+folder modèle {
 	package org.blagnac.coo.mvcexample.model {
 	    class Etudiant
 	    class GroupeTP
@@ -226,10 +229,10 @@ La classe correspondant à un contrôleur doit, pour être considérée comme te
 * `@Controller`
 * `@RequestMapping(value = "/<la base d'URL vers ce contrôleur>")`
 
-Exemple, pour la méthode `Exemple2EtudiantController` :
+Exemple, pour la classe `Exemple2EtudiantController` :
 
 * son URL d'accès est `/etudiant`
-* sa signature est
+* sa signature est :
 
 ----
 @Controller
@@ -250,14 +253,14 @@ Ensuite, chaque méthode correspondant à un service mis à disposition doit :
 
 Exemple, pour la méthode `Exemple2EtudiantController > get(...)` :
 
-* son URL d'accès est
-* sa méthode HTTP est
+* son URL d'accès est `/etudiant`
+* sa méthode HTTP est *GET*
 * sa signature est :
 
 ----
 @RequestMapping(
 	value = "", // Suffisant puisque la classe porte déjà le chemin "/etudiant"
-	produces = MediaType.APPLICATION_JSON_VALUE, 
+	produces = MediaType.APPLICATION_JSON_VALUE, // = "application/json"
 	method = RequestMethod.GET
 )
 public ResponseEntity<List<Etudiant>> get(
@@ -269,9 +272,22 @@ public ResponseEntity<List<Etudiant>> get(
 
 Autre exemple, pour la méthode `Exemple2EtudiantController > update(...)` :
 
-* son URL d'accès est
-* sa méthode HTTP est
-* sa signature est
+* son URL d'accès est `/etudiant/{identifiant}`
+* sa méthode HTTP est *PUT*
+* son corps de requête est un objet *Etudiant*
+* sa signature est :
+
+----
+@RequestMapping(
+	value = "/{identifiant}",
+	produces = MediaType.APPLICATION_JSON_VALUE, // = "application/json"
+	method = RequestMethod.PUT
+)
+public ResponseEntity<?> update(
+	@PathVariable(value = "identifiant") String identifiant, 
+	@RequestBody Etudiant etudiant
+);
+----
 
 [NOTE]
 ====
