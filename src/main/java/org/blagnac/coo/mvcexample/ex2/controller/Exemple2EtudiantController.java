@@ -1,6 +1,5 @@
 package org.blagnac.coo.mvcexample.ex2.controller;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
@@ -71,7 +70,7 @@ public class Exemple2EtudiantController {
 	 * @return la reponse du controleur - soit l'etudiant, soit un message d'erreur
 	 */
 	@RequestMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
-	public ResponseEntity<?> create(@RequestBody EtudiantDto etudiant) {
+	public ResponseEntity<?> create(@RequestBody Etudiant etudiant) {
 		System.out.println("Ajout de l'etudiant 'nom=" + etudiant.getNom() + ", prenom=" + etudiant.getPrenom()
 				+ ", groupeTP=" + etudiant.getGroupeTP() + "'");
 
@@ -105,7 +104,7 @@ public class Exemple2EtudiantController {
 	 */
 	@RequestMapping(value = "/{identifiant}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PUT)
 	public ResponseEntity<?> update(@PathVariable(value = "identifiant") String identifiant,
-			@RequestBody EtudiantDto etudiant) {
+			@RequestBody Etudiant etudiant) {
 		System.out.println("Modification de l'etudiant 'identifiant=" + identifiant + "'");
 
 		// On isole le groupe de TP de l'etudiant de la liste des groupes de TP
@@ -142,7 +141,7 @@ public class Exemple2EtudiantController {
 	 * @param groupeTP le groupe de TP (encore non verifie)
 	 * @throws Exception une exception fonctionnelle
 	 */
-	private void checkCreateOrUpdateFields(EtudiantDto etudiant, Optional<GroupeTP> groupeTP) throws Exception {
+	private void checkCreateOrUpdateFields(Etudiant etudiant, Optional<GroupeTP> groupeTP) throws Exception {
 		// Le nom ne peut pas etre vide ou nul
 		if (etudiant.getNom() == null || "".equals(etudiant.getNom().trim())) {
 			String erreur = "Le nom de l'etudiant ne peut pas etre nul";
@@ -158,7 +157,8 @@ public class Exemple2EtudiantController {
 		}
 
 		// Le groupe de TP ne peut pas etre nul
-		if (etudiant.getGroupeTP() == null || "".equals(etudiant.getGroupeTP().trim())) {
+		if (etudiant.getGroupeTP().getIdentifiant() == null
+				|| "".equals(etudiant.getGroupeTP().getIdentifiant().trim())) {
 			String erreur = "Le groupe de TP de l'etudiant ne peut pas etre nul";
 			System.err.println(erreur);
 			throw new Exception(erreur);
@@ -215,53 +215,6 @@ public class Exemple2EtudiantController {
 			String erreur = "La liste ne contient pas d'etudiant correspondant a l'identifiant '" + identifiant + "'";
 			System.err.println(erreur);
 			throw new Exception(erreur);
-		}
-	}
-
-	/**
-	 * Classe de representation d'un etudiant
-	 */
-	public static class EtudiantDto implements Serializable {
-
-		private static final long serialVersionUID = -3801373327818858630L;
-
-		/**
-		 * Nom
-		 */
-		private String nom;
-
-		/**
-		 * Prenom
-		 */
-		private String prenom;
-
-		/**
-		 * Groupe de TP (l'identifiant)
-		 */
-		private String groupeTP;
-
-		public String getNom() {
-			return nom;
-		}
-
-		public void setNom(String nom) {
-			this.nom = nom;
-		}
-
-		public String getPrenom() {
-			return prenom;
-		}
-
-		public void setPrenom(String prenom) {
-			this.prenom = prenom;
-		}
-
-		public String getGroupeTP() {
-			return groupeTP;
-		}
-
-		public void setGroupeTP(String groupeTP) {
-			this.groupeTP = groupeTP;
 		}
 	}
 }
