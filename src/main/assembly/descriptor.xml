@@ -22,6 +22,9 @@
 			<includes>
 				<include>images/**</include>
 				<include>readme.html</include>
+				<include>exemple1.html</include>
+				<include>exemple2.html</include>
+				<include>imaginer-plus-loin.html</include>
 			</includes>
 		</fileSet>
 		<fileSet>

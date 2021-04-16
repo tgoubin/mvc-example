@@ -11,11 +11,11 @@ Concevoir son application en respectant une séparation *M* odèle - *V* ue - *C
 @startuml
 
 package modele
-package controleur
+package contrôleur
 package vue
 
-vue -> controleur
-controleur -> modele
+vue -> contrôleur
+contrôleur -> modele
 modele <.. vue
 
 @enduml
@@ -71,417 +71,46 @@ Cette application doit :
 ** modification d'un étudiant
 ** suppression d'un étudiant
 
-=== Exemple 1 - Une application 100% Java
+*Voici une proposition de maquette simple :*
 
-Dans cet exemple, nous allons détailler l'architecture d'une première solution, dont voici les spécificités techniques :
-
-* stockage des informations sur les étudiants dans des fichiers CSV (texte utilisant un séparateur)
-* interface graphique en *Swing*
-
-La technologie *Java* est donc la seule utilisée.
-
-==== La partie "modèle"
-
-[NOTE]
-====
-Cette partie est valable pour tous les exemples.
-====
-
-Les classes du modèle sont dans le package `org.blagnac.coo.mvcexample.model` :
-
-* `Etudiant.java`
-* `GroupeTD.java`
-* `GroupeTP.java`
-
-[plantuml, "modele", png]  
+[plantuml, "maquette", png]
 ----
-@startuml
-
-folder modele {
-	package org.blagnac.coo.mvcexample.model {
-	    class Etudiant {
-	        - identifiant: String
-	        - nom: String
-	        - prenom: String
-	        - groupeTP: GroupeTP
-	        + get...()
-	        + set...(...)
-	    }
-	    
-	    class GroupeTP {
-	        - identifiant: String
-	        - groupeTD: GroupeTD
-	        - groupe: Character
-	        + get...()
-	        + set...(...)
-	    }
-	    
-	    class GroupeTD {
-	        - identifiant: String
-	        - annee: int
-	        - numero: int
-	        + get...()
-	        + set...(...)
-	    }
-	}
-}
-
-Etudiant "1..*" -- "1" GroupeTP
-GroupeTP "1..2" -- "1" GroupeTD
-
-@enduml
-----
-
-Comme expliqué plus haut, ces classes peuvent être assimilées à des entités, c'est à dire la correspondance en classes Java de notre "pseudo" modèle de données.
-
-===== Le stockage des informations
-
-Si nous devions imaginer un modèle de base de données pour notre application, nous aurions pu proposer ceci :
-
-Pour simplifier, nous utilisons donc les fichiers CSV suivants, en guise de stockage des informations :
-
-* `src/main/resources/groupesTD.csv` : liste des groupes de TD (colonnes identifiant, année, numéro)
-* `src/main/resources/groupesTP.csv` : liste des groupes de TP (colonnes identifiant, groupe de TD associé, groupe)
-* `src/main/resources/etudiants.csv` : liste des étudiants (colonnes nom, prénom, groupe de TP associé)
-
-Au lancement de l'application, les données sont chargées dans des variables statiques, accessibles dès lors depuis n'importe quelle classe. Ce processus a lieu dans `org.blagnac.coo.mvcexample.controller.MainController > loadData()`, et est appelé depuis la classe principale.
-
-[NOTE]
-====
-Nous pouvons considérer la classe `MainController` comme se trouvant dans la partie contrôleur.
-====
-
-Nous allons donc ajouter aux classes du modèle des méthodes statiques de chargement (à partir de la lecture des fichiers CSV) et d'accès aux données (avec potentiellement du tri, du filtrage, etc...).
-
-[NOTE]
-====
-Par bonne pratique, dans le cas de l'utilisation d'une vraie base de données, ces méthodes d'accès aux données (par requêtage SQL donc) seraient placées dans d'autres classes.
-====
-
-[plantuml, "stockage-infos", png]  
-----
-@startuml
-
-folder "src/main/java" {
-    package org.blagnac.coo.mvcexample.ex1 {
-        class Exemple1Application {
-            + {static} main(String[] args)
-        }
+@startsalt
+{
+    = Liste des étudiants
+    | . 
+    
+    == Recherche
+    | . 
+    {
+        Nom : | "Saisir un nom..." | . | . | . | Prénom : | "Saisir un prénom..." | . | . | . | Groupe de TP : | ^Sélectionner un Groupe de TP...^ | . | . | . | [Rechercher] | [Afficher tout]
     }
     
-    package org.blagnac.coo.mvcexample.controller {
-        class MainController {
-            + {static} loadData()
-        }
+    | . 
+    
+    == Actions
+    | . 
+    {
+        [Ajouter un étudiant] | . | . | . | ^Sélectionner un Groupe de TP...^ | [Modifier] | [Supprimer]
     }
     
-    package org.blagnac.coo.mvcexample.model {
-        class Etudiant {
-            - identifiant: String
-            - nom: String
-            - prenom: String
-            - groupeTP: GroupeTP
-            - {static} LISTE: List<Etudiant>
-            + get...()
-            + set...(...)
-            + {static} loadEtudiants()
-            + {static} getAll(): List<Etudiant>
-            + {static} getBy(String nom, String prenom, String identifiantGroupeTP): List<Etudiant>
-            + {static} create(String nom, String prenom, GroupeTP groupeTP): Etudiant
-            + {static} update(String identifiant, String nom, String prenom, GroupeTP groupeTP): Etudiant
-            + {static} delete(String identifiant)
-        }
-        
-        class GroupeTP {
-            - identifiant: String
-            - groupeTD: GroupeTD
-            - groupe: Character
-            - {static} LISTE: List<GroupeTP>
-            + get...()
-            + set...(...)
-            + {static} loadGroupesTP()
-        }
-        
-        class GroupeTD {
-            - identifiant: String
-            - annee: int
-            - numero: int
-            - {static} LISTE: List<GroupeTD>
-            + get...()
-            + set...(...)
-            + {static} loadGroupesTD()
-        }
-    }
-}
-
-folder "src/main/resources/csv" {
-    file etudiants.csv {
-    }
+    | . 
     
-    file groupesTP.csv {
+    {#
+        <b>Nom | <b>Prénom | <b>Année | <b>Groupe de TD | <b>Groupe de TP
+        ABALO | Luc | 2 | 1 | A
+        BAILLE | Cyril | 2 | 2 | B
+        BRYANT | Kobe | 1 | 1 | A
+        CURRY | Stephen | 1 | 1 | B
+        DESCHAMPS | Didier | 2 | 4 | B
+        DUPONT | Antoine | 2 | 1 | B
     }
-    
-    file groupesTD.csv {
-    }
 }
-
-Exemple1Application --> MainController: loadData()
-MainController -> Etudiant: loadEtudiants()
-MainController -> GroupeTP: loadGroupesTP()
-MainController -> GroupeTD: loadGroupesTD()
-
-Etudiant "1..*" -- "1" GroupeTP
-GroupeTP "1..2" -- "1" GroupeTD
-Etudiant --> etudiants.csv: Lecture du fichier CSV
-GroupeTP --> groupesTP.csv: Lecture du fichier CSV
-GroupeTD --> groupesTD.csv: Lecture du fichier CSV
-
-@enduml
+@endsalt
 ----
 
-==== La partie "vue"
+=== link:exemple1.html[Exemple 1 - Une application 100% Java]
 
-[plantuml, "ex1-vue", png]  
-----
-@startuml
+=== link:exemple2.html[Exemple 2 - Une application Java / Web]
 
-folder vue {
-	package javax.swing {
-		class JFrame
-		class JPanel
-	}
-	
-	package org.blagnac.coo.mvcexample.ex1.view {
-		class Fenetre
-		class Formulaires
-		class Tableau
-		class FormRecherche
-		class FormActions
-	}
-}
-
-folder modele {
-	package org.blagnac.coo.mvcexample.model {
-	    class Etudiant
-	    class GroupeTP
-	}
-}
-
-folder controleur {
-	package org.blagnac.coo.mvcexample.ex1.controller {
-	}
-}
-
-Fenetre --|> JFrame
-Formulaires --|> JPanel
-Tableau --|> JPanel
-FormRecherche --|> JPanel
-FormActions --|> JPanel
-
-Fenetre --> Formulaires: construit
-Fenetre --> Tableau: construit
-Formulaires --> FormRecherche: construit
-Formulaires --> FormActions: construit
-FormRecherche --> Tableau: utilise
-FormActions --> Tableau: utilise
-
-FormRecherche --> GroupeTP: utilise
-FormActions --> GroupeTP: utilise
-FormActions --> Etudiant: utilise
-FormActions --> org.blagnac.coo.mvcexample.ex1.controller: utilise
-Tableau --> Etudiant: utilise
-org.blagnac.coo.mvcexample.ex1.controller --> Etudiant: utilise
-
-@enduml
-----
-
-Les classes du modèle sont dans le package `org.blagnac.coo.mvcexample.ex1.view` :
-
-* `Fenetre.java` : la classe qui permet l'affichage de la fenêtre principale de l'application
-* `Formulaires.java` : la classe qui permet l'affichage des deux formulaires (recherche et actions)
-* `FormRecherche.java` : la classe qui permet l'affichage du formulaire de recherche d'étudiants
-* `FormActions.java` : la classe qui permet l'affichage du formulaire de création / modification / suppression d'étudiant
-* `Tableau.java` : la classe qui permet l'affichage du tableau des étudiants
-
-===== Intéractions avec le modèle et le contrôleur
-
-A plusieurs endroits, des éléments de l'IHM ont besoin d'utiliser des données du modèle :
-
-* en lecture :
-** la liste déroulante pour filtrer par groupe de TP : `FormRecherche > getGroupesTP()`
-** la liste déroulante des étudiants, pour sélectionner qui modifier / supprimer : `FormActions.EtudiantComboBoxModel > getEtudiants()`
-** la liste déroulante pour sélectionner le groupe de TP associé à l'étudiant à modifier / supprimer : `FormActions > onClickBtAjouterEtudiant() / onClickBtModifierEtudiant`
-** le tableau des étudiants : `Tableau > majTableau(...)`
-
-*Dans ce cas, la vue peut accéder directement au modèle, ce qu'elle fait par l'utilisation de `Etudiant.getAll()`, `Etudiant.getBy(...)` et `GroupeTP.LISTE`*.
-
-* en écriture :
-** la création d'un étudiant : `FormActions > onClickBtAjouterEtudiant()`
-** la modification d'un étudiant : `FormActions > onClickBtModifierEtudiant()`
-** la suppression d'un étudiant : `FormActions > onClickBtSupprimerEtudiant()`
-
-*Dans ce cas, un contrôleur doit donc intervenir, pour faire vérifier les données à ajouter / modifier / supprimer puis les faire transiter vers le modèle.*
-
-==== La partie "contrôleur"
-
-[plantuml, "ex1-controleur", png]  
-----
-@startuml
-
-folder controleur {
-	package org.blagnac.coo.mvcexample.ex1.controller {
-		class Exemple1EtudiantController {
-			+ {static} createEtudiant(String nom, String prenom, GroupeTP groupeTP): Etudiant
-			+ {static} updateEtudiant(String identifiant, String nom, String prenom, GroupeTP groupeTP): Etudiant
-			+ {static} deleteEtudiant(String identifiant)
-		}
-	}
-}
-
-folder controleur {
-	package org.blagnac.coo.mvcexample.model {
-	    class Etudiant
-	}
-}
-
-Exemple1EtudiantController --> Etudiant: create(nom, prenom, groupeTP)
-Exemple1EtudiantController --> Etudiant: update(identifiant, nom, prenom, groupeTP)
-Exemple1EtudiantController --> Etudiant: delete(identifiant)
-
-@enduml
-----
-
-Les classes du modèle sont dans le package `org.blagnac.coo.mvcexample.ex1.controller` :
-
-* `Exemple1EtudiantController.java` : le contrôleur qui concerne les étudiants
-** méthode `createEtudiant()` : appel de `Etudiant.create(...)`, après avoir effectué des contrôles métiers
-** méthode `updateEtudiant()` : appel de `Etudiant.update(...)`, après avoir effectué des contrôles métiers
-** méthode `deleteEtudiant()` : appel de `Etudiant.delete(...)`, après avoir effectué des contrôles métiers
-
-==== Intégralité de l'application
-
-[plantuml, "ex1", png]  
-----
-@startuml
-
-folder Application {
-	package org.blagnac.coo.mvcexample.ex1 {
-	    class Exemple1Application {
-	        + {static} main(String[] args)
-	    }
-	}
-}
-
-folder vue {
-	package org.blagnac.coo.mvcexample.ex1.view {
-		class Fenetre
-		class Formulaires
-		class Tableau
-		class FormRecherche
-		class FormActions
-	}
-}
-
-folder controleur {
-	package org.blagnac.coo.mvcexample.ex1.controller {
-		class Exemple1EtudiantController {
-			+ {static} createEtudiant(String nom, String prenom, GroupeTP groupeTP): Etudiant
-			+ {static} updateEtudiant(String identifiant, String nom, String prenom, GroupeTP groupeTP): Etudiant
-			+ {static} deleteEtudiant(String identifiant)
-		}
-	}
-	
-	package org.blagnac.coo.mvcexample.controller {
-	    class MainController {
-	        + {static} loadData()
-	    }
-	}
-}
-
-folder modele {
-	package org.blagnac.coo.mvcexample.model {
-	    class Etudiant {
-	        - identifiant: String
-	        - nom: String
-	        - prenom: String
-	        - groupeTP: GroupeTP
-	        - {static} LISTE: List<Etudiant>
-	        + get...()
-	        + set...(...)
-	        + {static} loadEtudiants()
-	        + {static} getAll(): List<Etudiant>
-	        + {static} getBy(String nom, String prenom, String identifiantGroupeTP): List<Etudiant>
-	        + {static} create(String nom, String prenom, GroupeTP groupeTP): Etudiant
-	        + {static} update(String identifiant, String nom, String prenom, GroupeTP groupeTP): Etudiant
-	        + {static} delete(String identifiant)
-	    }
-	    
-	    class GroupeTP {
-	        - identifiant: String
-	        - groupeTD: GroupeTD
-	        - groupe: Character
-	        - {static} LISTE: List<GroupeTP>
-	        + get...()
-	        + set...(...)
-	        + {static} loadGroupesTP()
-	    }
-	    
-	    class GroupeTD {
-	        - identifiant: String
-	        - annee: int
-	        - numero: int
-	        - {static} LISTE: List<GroupeTD>
-	        + get...()
-	        + set...(...)
-	        + {static} loadGroupesTD()
-	    }
-	}
-}
-
-Fenetre --> Formulaires
-Fenetre --> Tableau
-Formulaires --> FormRecherche
-Formulaires --> FormActions
-FormRecherche --> Tableau
-FormActions --> Tableau
-
-FormRecherche --> GroupeTP
-FormActions --> GroupeTP
-FormActions --> Etudiant
-FormActions --> Exemple1EtudiantController
-Tableau --> Etudiant
-Exemple1EtudiantController --> Etudiant
-
-Etudiant "1..*" -- "1" GroupeTP
-GroupeTP "1..2" -- "1" GroupeTD
-
-Exemple1Application --> MainController
-MainController -> Etudiant
-MainController -> GroupeTP
-MainController -> GroupeTD
-
-@enduml
-----
-
-=== Exemple 2 - Une application Java / Web
-
-[NOTE]
-====
-Cet exemple contient du Java hors programme (l'utilisation du framework Spring-Boot...). Ne pas s'en soucier.
-====
-
-==== La partie "modèle"
-
-==== La partie "vue"
-
-==== La partie "contrôleur"
-
-==== Intégralité de l'application
-
-=== Imaginer plus loin - Une solution multi-plateformes
-
-==== La partie "modèle"
-
-==== La partie "vue"
-
-==== La partie "contrôleur"
+=== link:imaginer-plus-loin.html[Imaginer plus loin - Une solution multi-plateformes]

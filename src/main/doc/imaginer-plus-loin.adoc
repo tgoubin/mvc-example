@@ -1,0 +1,11 @@
+:toc:
+
+= Le modèle MVC par l'exemple : imaginer plus loin
+
+== La partie "modèle"
+
+Voir link:exemple1.html#_la_partie_modèle[exemple 1].
+
+== La partie "vue"
+
+== La partie "contrôleur"

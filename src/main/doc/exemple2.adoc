@@ -1,0 +1,283 @@
+:toc:
+
+= Le modèle MVC par l'exemple : Exemple 2
+
+Dans cet exemple, nous allons détailler l'architecture d'une seconde solution, dont voici les spécificités techniques :
+
+* stockage des informations sur les étudiants dans des fichiers CSV (texte utilisant un séparateur), récupérables depuis un programme Java
+* interface graphique accessible depuis un navigateur web
+
+Deux technologies seront donc utilisées :
+
+* une partie en *Java* (le *serveur*) qui permettra l'accès aux données (nous utiliserons *SpringBoot*, qui sera brièvement introduit)
+* une partie en *technologies web* (HTML / CSS / JavaScript, le *client*) qui permettra l'affichage des données
+
+== Avant de commencer : la structure d'une application SpringBoot
+
+=== Brève introduction de SpringBoot et de la notion d'API
+
+*Spring* est le framework "phare" utilisé pour construire des applications Java, dont il facilite le développement et les tests.
+
+*SpringBoot* utilise *Spring* pour proposer un socle de développement efficace et simplifié (*Spring* peut par exemple souffrir de sa complexité de configuration...).
+
+Nous utiliserons *SpringBoot* ici pour concevoir une *API* : une application qui mettra à disposition des *services* permettant à un système tiers (ici, une page web) d'intéragir avec les données. Cette intéraction est possible grâce :
+
+* au protocole de communication *HTTP*
+* à l'utilisation d'un langage commun pour échanger des données structurées (généralement le *JSON*)
+
+=== La partie Java
+
+[NOTE]
+====
+Les classes Java spécifiques à cet exemple se trouvent dans le package `org.blagnac.coo.mvcexample.ex2...`.
+====
+
+* La dépendance Maven
+
+----
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-web</artifactId>
+	<version>2.3.0.RELEASE</version>
+</dependency>
+----
+
+* La classe principale `Exemple2Application.java`, qui comporte certaines différences avec `Exemple1Application.java`, son "équivalent" pour l'exemple 1 :
+** les annotations `@SpringBootApplication(scanBasePackages = "org.blagnac.coo.mvcexample.ex2")` et `@ComponentScan("org.blagnac.coo.mvcexample.ex2")` nécessaires pour déclarer les packages à prendre en compte
+** la ligne `SpringApplication.run(Exemple2Application.class);` dans la méthode `main(...)` qui lance le démarrage de l'application Spring
+** la méthode `run(ApplicationArguments args)`, spécifiée dans l'interface `ApplicationRunner` (que la classe principale implémente). Cette méthode décrit les instructions à exécuter au lancement de l'application (contenu équivalent à `Exemple1Application > main(...)`.
+
+* La configuration : `src/main/resources/application.properties`
+** `server.servlet.context-path=/mvcexample` : le chemin pour accéder à l'application 
+** `server.port=8080` : le port d'exposition de l'application
+
+*L'ensemble des services seront donc accessibles à partir de l'adresse suivante : http://localhost:8080/mvcexample*.
+
+=== La partie Web
+
+L'ensemble des fichiers HTML / JavaScript / CSS utilisés se trouvent dans `src/main/resources/public`. Cet emplacement permet la mise à disposition de la page web à l'adresse http://localhost:8080/mvcexample.
+
+== La partie "modèle"
+
+Voir link:exemple1.html#_la_partie_modèle[exemple 1].
+
+== La partie "vue"
+
+[plantuml, "ex2-vue", png]  
+----
+@startuml
+
+folder vue {
+	folder src/main/resources/public {
+		folder css {
+			file style.css
+		}
+		folder js {
+			file index.js
+			file recherche.js
+			file actions.js
+		}
+		file index.html
+	}
+}
+
+folder modele {
+	package org.blagnac.coo.mvcexample.model {
+	    class Etudiant
+	    class GroupeTP
+	}
+}
+
+folder controleur {
+	package org.blagnac.coo.mvcexample.ex2.controller {
+	}
+}
+
+index.html --> style.css
+index.html --> index.js
+index.html --> recherche.js
+index.html --> actions.js
+recherche.js --> org.blagnac.coo.mvcexample.ex2.controller
+actions.js --> org.blagnac.coo.mvcexample.ex2.controller
+org.blagnac.coo.mvcexample.ex2.controller --> Etudiant
+
+@enduml
+----
+
+L'IHM est une page web très simple :
+
+* `index.html` décrit la structure de la page HTML
+* `css/style.css` décrit les styles (tailles, polices, positionnement) des éléments de page HTML
+* les fichiers JavaScript du dossier `js` gèrent le dynamisme de la page HTML et les intéractions avec l'API, à travers l'utilisation de la fonction `fetch(...)`, qui permet l'envoi de requêtes HTTP
+
+
+=== Intéractions avec le modèle et le contrôleur
+
+Pour les mêmes cas que l'exemple 1, des éléments de l'IHM ont besoin d'utiliser des données du modèle :
+
+* en lecture :
+** la liste déroulante pour filtrer par groupe de TP : `recherche.js > load_Recherche() > load_GroupesTP(...)`
+** la liste déroulante des étudiants, pour sélectionner qui modifier / supprimer : `actions.js > load_Etudiants()`
+** la liste déroulante pour sélectionner le groupe de TP associé à l'étudiant à modifier / supprimer : `actions.js > displayFormulaireCreationModification() > load_GroupesTP(...)`
+** le tableau des étudiants : `recherche.js > displayEtudiantsInTable()`
+
+*Dans ce cas, et contrairement à l'exemple 1 de part l'architecture de l'application, la vue ne peut pas directement accéder au modèle. Un contrôleur doit intervenir pour mettre à disposition les données*.
+
+* en écriture :
+** la création d'un étudiant : `actions.js > onClickBtModifierEtudiant()`
+** la modification d'un étudiant : `actions.js > onClick_btModifierEtudiant()`
+** la suppression d'un étudiant : `actions.js > onClick_btSupprimerEtudiant()`
+
+*Dans ce cas, un contrôleur doit aussi intervenir, pour faire vérifier les données à ajouter / modifier / supprimer puis les faire transiter vers le modèle.*
+
+Nous obtenons donc un modèle MVC plus "strict" :
+
+[plantuml, "modele-mvc2", png]  
+----
+@startuml
+
+folder "API Java" {
+	package modele
+	package contrôleur
+}
+
+folder "Page web" {
+	package vue
+}
+
+vue -> contrôleur: HTTP
+contrôleur -> modele: Java
+
+@enduml
+----
+
+== La partie "contrôleur"
+
+Dans une API, les contrôleurs sont les *points d'entrée* à partir desquels les systèmes extérieurs peuvent accéder aux services mis à disposition.
+
+L'accès à un service se définit avec :
+
+* une URL
+* une méthode HTTP, respectant le standard suivant :
+** GET pour les services de lecture de données
+** POST pour les services de création de données
+** PUT pour les services de modification de données
+** DELETE pour les services de suppression de données
+* Dans le cas d'un POST ou d'un PUT, un éventuel *corps de requête*, écrit dans le langage structuré d'échange des données (généralement le *JSON*)
+
+=== Définition des contrôleurs
+
+[plantuml, "ex1-controleur", png]  
+----
+@startuml
+
+folder controleur {
+	package org.blagnac.coo.mvcexample.ex2.controller {
+		class Exemple2EtudiantController {
+			
+		}
+		
+		class Exemple2GroupeTPController {
+			
+		}
+	}
+}
+
+folder modele {
+	package org.blagnac.coo.mvcexample.model {
+	    class Etudiant
+	    class GroupeTP
+	}
+}
+
+Exemple2EtudiantController --> Etudiant: create(nom, prenom, groupeTP)
+Exemple2EtudiantController --> Etudiant: update(identifiant, nom, prenom, groupeTP)
+Exemple2EtudiantController --> Etudiant: delete(identifiant)
+Exemple2GroupeTPController --> GroupeTP: LISTE
+
+@enduml
+----
+
+Dans notre cas, nous pouvons donc définir deux contrôleurs :
+
+* un contrôleur qui concerne l'entité métier *Etudiant* : `Exemple2EtudiantController.java`, qui contiendra les services suivants :
+
+|===
+|Méthode HTTP|URL|Corps de requête|Méthode Java|Fonction|Destiné à
+
+|GET|/etudiant||`get(String, String, String)`|Récupérer  les étudiants correspondant à des critères de recherche (facultativement saisis)|Tableau des étudiants, liste déroulante de sélection d'un étudiant à modifier / supprimer
+|POST|/etudiant|`{"nom": "unNom", "prenom": "unPrenom", "groupeTP": "identifiantGroupeTP"}`|`create(Etudiant)`|Créer un étudiant|Formulaire de création d'un étudiant
+|PUT|/etudiant/{identifiant}|`{"nom": "unNom", "prenom": "unPrenom", "groupeTP": "identifiantGroupeTP"}`|`update(String, Etudiant)`|Créer un étudiant|Formulaire de modification d'un étudiant
+|DELETE|/etudiant/{identifiant}||`delete(String)`|Supprimer un étudiant|Formulaire de suppression d'un étudiant
+|===
+
+* un contrôleur qui concerne l'entité métier *GroupeTP* : `Exemple2GroupeTPController.java`, qui contiendra le service suivant :
+
+|===
+|Méthode HTTP|URL|Méthode Java|Fonction|Destiné à
+
+|GET|/groupetp|`getAll()`|Récupérer l'ensemble des groupes de TP|Listes déroulantes de sélection d'un groupe de TP (filtre de recherche, ajout / modification d'étudiant)
+|===
+
+=== Développement des contrôleurs
+
+La classe correspondant à un contrôleur doit, pour être considérée comme telle par SpringBoot, être préfixée par les annotations suivantes :
+
+* `@Controller`
+* `@RequestMapping(value = "/<la base d'URL vers ce contrôleur>")`
+
+Exemple, pour la méthode `Exemple2EtudiantController` :
+
+* son URL d'accès est `/etudiant`
+* sa signature est
+
+----
+@Controller
+@RequestMapping(value = "/etudiant")
+public class Exemple2EtudiantController {}
+----
+
+Ensuite, chaque méthode correspondant à un service mis à disposition doit :
+
+* être préfixée par l'annotation `@RequestMapping(value = "<l'URL du service>", produces = <un format de données>, method = <GET, POST, PUT ou DELETE>)`
+* associer un type à chacun des paramètres de sa signature :
+** `@RequestParam` : un paramètre de type `?param1=value1&param2=value`, positionné à la fin de l'URL
+** `@PathVariable` : un paramètre positionné dans le chemin de l'URL (directement placé après un `/`)
+** `@RequestBody` : un corps de requête, dont le type doit être un objet Java serializable
+* retourner un objet de type `ResponseEntity`, qui contient :
+** la réponse du service (le(s) objet(s) en réponse, un message d'erreur...)
+** le code HTTP de retour (200 = OK, 400 = BAD_REQUEST, 404 = NOT_FOUND...) également défini dans l'implémentation de la méthode (selon s'il y a des erreurs ou non)
+
+Exemple, pour la méthode `Exemple2EtudiantController > get(...)` :
+
+* son URL d'accès est
+* sa méthode HTTP est
+* sa signature est :
+
+----
+@RequestMapping(
+	value = "", // Suffisant puisque la classe porte déjà le chemin "/etudiant"
+	produces = MediaType.APPLICATION_JSON_VALUE, 
+	method = RequestMethod.GET
+)
+public ResponseEntity<List<Etudiant>> get(
+	@RequestParam(value = "nom", required = false) String nom, 
+	@RequestParam(value = "prenom", required = false) String prenom, 
+	@RequestParam(value = "groupeTP", required = false) String identifiantGroupeTP
+);
+----
+
+Autre exemple, pour la méthode `Exemple2EtudiantController > update(...)` :
+
+* son URL d'accès est
+* sa méthode HTTP est
+* sa signature est
+
+[NOTE]
+====
+Pour tester une méthode GET depuis un navigateur, il suffit de taper son URL complète dans la barre d'adresse. Le JSON brut, produit par l'API, apparaîtra.
+
+Exemple : tester avec http://localhost:8080/mvcexample/etudiant
+====
+
+== Intégralité de l'application
