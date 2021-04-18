@@ -4,10 +4,10 @@
 
 Dans cet exemple, nous allons détailler l'architecture d'une première solution, dont voici les spécificités techniques :
 
-* stockage des informations sur les étudiants dans des fichiers CSV (texte utilisant un séparateur), récupérables depuis un programme Java
+* stockage des informations sur les étudiants dans des fichiers CSV (texte utilisant un séparateur), récupérables depuis un programme *Java*
 * interface graphique en *Swing*
 
-La technologie Java est donc la seule utilisée.
+La technologie *Java* est donc la seule utilisée.
 
 == La partie "modèle"
 
@@ -85,6 +85,13 @@ Nous allons donc ajouter aux classes du modèle des méthodes statiques de charg
 [NOTE]
 ====
 Par bonne pratique, dans le cas de l'utilisation d'une vraie base de données, ces méthodes d'accès aux données (par requêtage SQL donc) seraient placées dans d'autres classes.
+====
+
+[NOTE]
+====
+Toujours pour simplifier (la persistence des données n'étant pas le sujet), les mises à jour (ajout / modification / suppression d'étudiant) ne sont effectives que dans les variables statiques, mais pas répercutées dans les fichiers CSV.
+
+*--> A chaque redémarrage de l'application, les données sont réinitialisées.*
 ====
 
 [plantuml, "stockage-infos", png]  

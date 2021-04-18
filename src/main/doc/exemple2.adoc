@@ -4,7 +4,7 @@
 
 Dans cet exemple, nous allons détailler l'architecture d'une seconde solution, dont voici les spécificités techniques :
 
-* stockage des informations sur les étudiants dans des fichiers CSV (texte utilisant un séparateur), récupérables depuis un programme Java
+* stockage des informations sur les étudiants dans des fichiers CSV (texte utilisant un séparateur), récupérables depuis un programme *Java*
 * interface graphique accessible depuis un navigateur web
 
 Deux technologies seront donc utilisées :
@@ -81,25 +81,15 @@ folder vue {
 	}
 }
 
-folder modèle {
-	package org.blagnac.coo.mvcexample.model {
-	    class Etudiant
-	    class GroupeTP
-	}
-}
-
 folder contrôleur {
-	package org.blagnac.coo.mvcexample.ex2.controller {
-	}
 }
 
 index.html --> style.css
 index.html --> index.js
 index.html --> recherche.js
 index.html --> actions.js
-recherche.js --> org.blagnac.coo.mvcexample.ex2.controller
-actions.js --> org.blagnac.coo.mvcexample.ex2.controller
-org.blagnac.coo.mvcexample.ex2.controller --> Etudiant
+recherche.js --> contrôleur: HTTP
+actions.js --> contrôleur: HTTP
 
 @enduml
 ----
@@ -118,6 +108,7 @@ Pour les mêmes cas que l'exemple 1, des éléments de l'IHM ont besoin d'utilis
 * en lecture :
 ** la liste déroulante pour filtrer par groupe de TP : `recherche.js > load_Recherche() > load_GroupesTP(...)`
 ** la liste déroulante des étudiants, pour sélectionner qui modifier / supprimer : `actions.js > load_Etudiants()`
+** la récupération de l'étudiant à modifier : `actions.js > displayFormulaireCreationModification(...)`
 ** la liste déroulante pour sélectionner le groupe de TP associé à l'étudiant à modifier / supprimer : `actions.js > displayFormulaireCreationModification() > load_GroupesTP(...)`
 ** le tableau des étudiants : `recherche.js > displayEtudiantsInTable()`
 
@@ -136,7 +127,7 @@ Nous obtenons donc un modèle MVC plus "strict" :
 ----
 @startuml
 
-folder "API Java" {
+folder API {
 	package modèle
 	package contrôleur
 }
@@ -193,6 +184,7 @@ folder modèle {
 	}
 }
 
+Exemple2EtudiantController --> Etudiant: LISTE
 Exemple2EtudiantController --> Etudiant: create(nom, prenom, groupeTP)
 Exemple2EtudiantController --> Etudiant: update(identifiant, nom, prenom, groupeTP)
 Exemple2EtudiantController --> Etudiant: delete(identifiant)
@@ -209,8 +201,9 @@ Dans notre cas, nous pouvons donc définir deux contrôleurs :
 |Méthode HTTP|URL|Corps de requête|Méthode Java|Fonction|Destiné à
 
 |GET|/etudiant||`get(String, String, String)`|Récupérer  les étudiants correspondant à des critères de recherche (facultativement saisis)|Tableau des étudiants, liste déroulante de sélection d'un étudiant à modifier / supprimer
-|POST|/etudiant|`{"nom": "unNom", "prenom": "unPrenom", "groupeTP": "identifiantGroupeTP"}`|`create(Etudiant)`|Créer un étudiant|Formulaire de création d'un étudiant
-|PUT|/etudiant/{identifiant}|`{"nom": "unNom", "prenom": "unPrenom", "groupeTP": "identifiantGroupeTP"}`|`update(String, Etudiant)`|Créer un étudiant|Formulaire de modification d'un étudiant
+|GET|/etudiant/{identifiant}||`getById(String)`|Récupérer un étudiant correspondant à un identifiant|Formulaire de modification d'un étudiant
+|POST|/etudiant|Un objet *Etudiant* : `{"nom": "unNom", "prenom": "unPrenom", "groupeTP": "identifiantGroupeTP"}`|`create(Etudiant)`|Créer un étudiant|Formulaire de création d'un étudiant
+|PUT|/etudiant/{identifiant}|Un objet *Etudiant* : `{"nom": "unNom", "prenom": "unPrenom", "groupeTP": "identifiantGroupeTP"}`|`update(String, Etudiant)`|Créer un étudiant|Formulaire de modification d'un étudiant
 |DELETE|/etudiant/{identifiant}||`delete(String)`|Supprimer un étudiant|Formulaire de suppression d'un étudiant
 |===
 
@@ -221,6 +214,11 @@ Dans notre cas, nous pouvons donc définir deux contrôleurs :
 
 |GET|/groupetp|`getAll()`|Récupérer l'ensemble des groupes de TP|Listes déroulantes de sélection d'un groupe de TP (filtre de recherche, ajout / modification d'étudiant)
 |===
+
+[NOTE]
+====
+`Exemple2EtudiantController.java` est l'exemple typique d'un contrôleur *CRUD* complet (*C* reate, *R* ead, *U* pdate, *D* elete).
+====
 
 === Développement des contrôleurs
 
@@ -242,7 +240,7 @@ public class Exemple2EtudiantController {}
 
 Ensuite, chaque méthode correspondant à un service mis à disposition doit :
 
-* être préfixée par l'annotation `@RequestMapping(value = "<l'URL du service>", produces = <un format de données>, method = <GET, POST, PUT ou DELETE>)`
+* être préfixée par l'annotation `@RequestMapping(value = "<l'URL du service>", consumes = <un format de données>, produces = <un format de données>, method = <GET, POST, PUT ou DELETE>)`
 * associer un type à chacun des paramètres de sa signature :
 ** `@RequestParam` : un paramètre de type `?param1=value1&param2=value`, positionné à la fin de l'URL
 ** `@PathVariable` : un paramètre positionné dans le chemin de l'URL (directement placé après un `/`)
@@ -251,11 +249,22 @@ Ensuite, chaque méthode correspondant à un service mis à disposition doit :
 ** la réponse du service (le(s) objet(s) en réponse, un message d'erreur...)
 ** le code HTTP de retour (200 = OK, 400 = BAD_REQUEST, 404 = NOT_FOUND...) également défini dans l'implémentation de la méthode (selon s'il y a des erreurs ou non)
 
+[NOTE]
+====
+La traduction JSON <--> Java des objets transportés par HTTP (les corps de requêtes, ou les retours de services) est automatiquement gérée par SpringBoot.
+
+C'est le cas ici, pour un objet *Etudiant* :
+
+* `{ ... "nom": "unNom", "prenom": "unPrenom", ...}` en JSON
+* `public class Etudiant { ... private String nom;  private String prenom; ... }` en Java
+====
+
 Exemple, pour la méthode `Exemple2EtudiantController > get(...)` :
 
 * son URL d'accès est `/etudiant`
 * sa méthode HTTP est *GET*
-* sa signature est :
+* elle retourne une réponse HTTP qui, en cas de succès, contient une liste d'*Etudiant*, au format *JSON*
+* sa signature est donc :
 
 ----
 @RequestMapping(
@@ -274,12 +283,14 @@ Autre exemple, pour la méthode `Exemple2EtudiantController > update(...)` :
 
 * son URL d'accès est `/etudiant/{identifiant}`
 * sa méthode HTTP est *PUT*
-* son corps de requête est un objet *Etudiant*
+* elle retourne une réponse HTTP qui, en cas de succès, contient l'*Etudiant* modifié, au format *JSON*
+* son corps de requête est un objet *Etudiant*, au format *JSON*
 * sa signature est :
 
 ----
 @RequestMapping(
 	value = "/{identifiant}",
+	consumes = MediaType.APPLICATION_JSON_VALUE, // = "application/json"
 	produces = MediaType.APPLICATION_JSON_VALUE, // = "application/json"
 	method = RequestMethod.PUT
 )
