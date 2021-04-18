@@ -41,6 +41,13 @@ public class GroupeTP implements Serializable {
 
 	/**
 	 * Constructeur
+	 */
+	public GroupeTP() {
+		groupeTD = new GroupeTD();
+	}
+	
+	/**
+	 * Constructeur
 	 * 
 	 * @param identifiant l'identifiant
 	 * @param groupeTD    le groupe de TD

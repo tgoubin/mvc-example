@@ -40,13 +40,26 @@ input, button, select {
 	width: 300px;
 }
 
+#actions #form-creation-modification {
+	display: none;
+	margin-top: 20px;
+}
+
+#actions #form-creation-modification input, #actions #form-creation-modification select {
+	width: 170px;
+}
+
+#actions #form-creation-modification button {
+	width: 100px;
+}
+
 #tableau {
 	margin-left: 20px;
 	margin-top: 40px;
 	width: 1050px;
 	height: calc(100% - 350px);
 	overflow: auto;
-	height: calc(100% - 350px);
+	height: calc(100% - 400px);
 }
 
 #tableau table {

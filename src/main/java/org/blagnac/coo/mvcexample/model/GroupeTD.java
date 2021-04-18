@@ -41,6 +41,12 @@ public class GroupeTD implements Serializable {
 
 	/**
 	 * Constructeur
+	 */
+	public GroupeTD() {
+	}
+	
+	/**
+	 * Constructeur
 	 * 
 	 * @param identifiant l'identifiant
 	 * @param annee       l'annee

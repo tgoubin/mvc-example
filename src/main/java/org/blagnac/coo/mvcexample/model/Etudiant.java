@@ -48,6 +48,13 @@ public class Etudiant implements Serializable {
 
 	/**
 	 * Constructeur
+	 */
+	public Etudiant() {
+		groupeTP = new GroupeTP();
+	}
+	
+	/**
+	 * Constructeur
 	 * 
 	 * @param identifiant l'identifiant
 	 * @param nom         le nom

@@ -1,5 +1,6 @@
 package org.blagnac.coo.mvcexample.ex2.controller;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,6 +62,33 @@ public class Exemple2EtudiantController {
 	}
 
 	/**
+	 * Recuperation d'un etudiant a partir de son identifiant
+	 * 
+	 * URL complete : GET /etudiant/{identifiant} (RequestMapping de la classe +
+	 * RequestMapping de la methode)
+	 * 
+	 * @param identifiant l'identifiant de l'étudiant
+	 * @return la reponse du controleur - soit l'etudiant, soit un message d'erreur
+	 */
+	@RequestMapping(value = "/{identifiant}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+	public ResponseEntity<?> getByIdentifiant(@PathVariable(value = "identifiant") String identifiant) {
+		System.out.println("Recuperation de l'etudiant 'identifiant=" + identifiant + "'");
+
+		Etudiant etudiant = null;
+
+		// Verification de l'identifiant
+		try {
+			etudiant = checkAndGetByIdentifiant(identifiant);
+		} catch (Exception e) {
+			// On renvoie une erreur avec le code 404 / NOT FOUND (code HTTP pour designer
+			// une ressource introuvable)
+			return new ResponseEntity<Erreur>(new Erreur(e.getMessage()), HttpStatus.NOT_FOUND);
+		}
+
+		return new ResponseEntity<Etudiant>(etudiant, HttpStatus.CREATED);
+	}
+
+	/**
 	 * Creation d'un etudiant
 	 * 
 	 * URL complete : POST /etudiant (RequestMapping de la classe + RequestMapping
@@ -69,14 +97,15 @@ public class Exemple2EtudiantController {
 	 * @param etudiant l'etudiant
 	 * @return la reponse du controleur - soit l'etudiant, soit un message d'erreur
 	 */
-	@RequestMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+	@RequestMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
 	public ResponseEntity<?> create(@RequestBody Etudiant etudiant) {
 		System.out.println("Ajout de l'etudiant 'nom=" + etudiant.getNom() + ", prenom=" + etudiant.getPrenom()
-				+ ", groupeTP=" + etudiant.getGroupeTP() + "'");
+				+ ", groupeTP=" + etudiant.getGroupeTP().getIdentifiant() + "'");
 
-		// On isole le groupe de TP de l'etudiant de la liste des groupes de TP
+		// On isole le groupe de TP de l'etudiant de la liste des groupes de TP pour
+		// l'utiliser dans la verification
 		Optional<GroupeTP> groupeTP = GroupeTP.LISTE.stream()
-				.filter(g -> g.getIdentifiant().equals(etudiant.getGroupeTP())).findFirst();
+				.filter(g -> g.getIdentifiant().equals(etudiant.getGroupeTP().getIdentifiant())).findFirst();
 
 		// Verification des parametres
 		try {
@@ -84,7 +113,7 @@ public class Exemple2EtudiantController {
 		} catch (Exception e) {
 			// On renvoie une erreur avec le code 400 / Bad Request (code HTTP pour designer
 			// une mauvaise requete)
-			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Erreur>(new Erreur(e.getMessage()), HttpStatus.BAD_REQUEST);
 		}
 
 		return new ResponseEntity<Etudiant>(
@@ -102,22 +131,23 @@ public class Exemple2EtudiantController {
 	 * @param etudiant    l'etudiant
 	 * @return la reponse du controleur - soit l'etudiant, soit un message d'erreur
 	 */
-	@RequestMapping(value = "/{identifiant}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PUT)
+	@RequestMapping(value = "/{identifiant}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PUT)
 	public ResponseEntity<?> update(@PathVariable(value = "identifiant") String identifiant,
 			@RequestBody Etudiant etudiant) {
 		System.out.println("Modification de l'etudiant 'identifiant=" + identifiant + "'");
 
-		// On isole le groupe de TP de l'etudiant de la liste des groupes de TP
+		// On isole le groupe de TP de l'etudiant de la liste des groupes de TP pour
+		// l'utiliser dans la verification
 		Optional<GroupeTP> groupeTP = GroupeTP.LISTE.stream()
-				.filter(g -> g.getIdentifiant().equals(etudiant.getGroupeTP())).findFirst();
+				.filter(g -> g.getIdentifiant().equals(etudiant.getGroupeTP().getIdentifiant())).findFirst();
 
 		// Verification de l'identifiant
 		try {
-			checkIdentifiant(identifiant);
+			checkAndGetByIdentifiant(identifiant);
 		} catch (Exception e) {
 			// On renvoie une erreur avec le code 404 / NOT FOUND (code HTTP pour designer
 			// une ressource introuvable)
-			return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Erreur>(new Erreur(e.getMessage()), HttpStatus.NOT_FOUND);
 		}
 
 		// Verification des autres parametres
@@ -126,7 +156,7 @@ public class Exemple2EtudiantController {
 		} catch (Exception e) {
 			// On renvoie une erreur avec le code 400 / Bad Request (code HTTP pour designer
 			// une mauvaise requete)
-			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Erreur>(new Erreur(e.getMessage()), HttpStatus.BAD_REQUEST);
 		}
 
 		return new ResponseEntity<Etudiant>(
@@ -190,11 +220,11 @@ public class Exemple2EtudiantController {
 
 		// Verification de l'identifiant
 		try {
-			checkIdentifiant(identifiant);
+			checkAndGetByIdentifiant(identifiant);
 		} catch (Exception e) {
 			// On renvoie une erreur avec le code 404 / NOT FOUND (code HTTP pour designer
 			// une ressource introuvable)
-			return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Erreur>(new Erreur(e.getMessage()), HttpStatus.NOT_FOUND);
 		}
 
 		Etudiant.delete(identifiant);
@@ -203,18 +233,62 @@ public class Exemple2EtudiantController {
 	}
 
 	/**
-	 * Verification de l'identifiant passe en parametre
+	 * Verification de l'existence d'un etudiant a partir d'un identifiant, puis
+	 * recuperation de l'etudiant
 	 * 
 	 * @param identifiant l'identifiant
+	 * @return l'etudiant
 	 * @throws Exception
 	 */
-	private void checkIdentifiant(String identifiant) throws Exception {
+	private Etudiant checkAndGetByIdentifiant(String identifiant) throws Exception {
+		Optional<Etudiant> etudiant = Etudiant.LISTE.stream().filter(e -> e.getIdentifiant().equals(identifiant))
+				.findFirst();
+
 		// La liste des etudiants doit contenir un etudiant ayant l'identifiant passe en
 		// parametre
-		if (!Etudiant.LISTE.stream().filter(e -> e.getIdentifiant().equals(identifiant)).findFirst().isPresent()) {
+		if (!etudiant.isPresent()) {
 			String erreur = "La liste ne contient pas d'etudiant correspondant a l'identifiant '" + identifiant + "'";
 			System.err.println(erreur);
 			throw new Exception(erreur);
+		}
+
+		return etudiant.get();
+	}
+
+	/**
+	 * Classe de description d'une erreur
+	 */
+	private static class Erreur implements Serializable {
+
+		private static final long serialVersionUID = 6605102136399759405L;
+
+		/**
+		 * Le message d'erreur
+		 */
+		private String erreur;
+
+		/**
+		 * Constructeur
+		 * 
+		 * @param erreur le message d'erreur
+		 */
+		public Erreur(String erreur) {
+			super();
+			this.erreur = erreur;
+		}
+
+		// Eclipse considere cette methode comme "unused" mais en realite elle est
+		// utilisee pour le mapping JSON <-> Java par SpringBoot
+		@SuppressWarnings("unused")
+		public String getErreur() {
+			return erreur;
+		}
+
+		// Eclipse considere cette methode comme "unused" mais en realite elle est
+		// utilisee pour le mapping JSON <-> Java par SpringBoot
+		@SuppressWarnings("unused")
+		public void setErreur(String erreur) {
+			this.erreur = erreur;
 		}
 	}
 }

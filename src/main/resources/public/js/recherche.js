@@ -44,7 +44,7 @@ function onClick_btAfficherTout() {
 
 // Affichage des etudiants dans la <table>
 function displayEtudiantsInTable(filtres) {
-	// Appel du controller "/etudiant" declare dans la methode "get()" de Example2EtudiantContoller
+	// Appel de GET etudiant - Exemple2EtudiantController::get(String, String, String)
 	// On lui transmet les filtres de recherche, par l'URL
 	fetch('etudiant' + ((filtres) ? filtres : '')).then(
 		// Traitement de la reponse du controller

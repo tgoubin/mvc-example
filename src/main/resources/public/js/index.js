@@ -12,7 +12,7 @@ window.onload = function() {
 
 // Chargement des groupes de TP dans un <select>
 function load_GroupesTP(selectId) {
-	// Appel du controller "/groupetp" declare dans la methode "get()" de Example2GroupeTPContoller
+	// Appel de GET groupetp - Exemple2GroupeTPController::getAll()
 	fetch('groupetp').then(
 		// Traitement de la reponse du controller
 		function(response) {
@@ -26,13 +26,13 @@ function load_GroupesTP(selectId) {
 			var option0 = document.createElement('option');
 			option0.text = '';
 			option0.value = '';
-			document.geteElementById(selectId).appendChild(option0);
+			document.getElementById(selectId).appendChild(option0);
 
 			for (var i in result) {
 				var option = document.createElement('option');
 				option.text = result[i].groupeTD.annee + 'e annee - Groupe ' + result[i].groupeTD.numero + result[i].groupe;
 				option.value = result[i].identifiant;
-				document.geteElementById(selectId).appendChild(option);
+				document.getElementById(selectId).appendChild(option);
 			}
 		}
 	);
