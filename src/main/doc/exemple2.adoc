@@ -166,6 +166,7 @@ folder contrôleur {
 	package org.blagnac.coo.mvcexample.ex2.controller {
 		class Exemple2EtudiantController {
 			+ get(String nom, String prenom, String identifiantGroupeTP): ResponseEntity<List<Etudiant>>
+			+ getById(String identifiant): ResponseEntity<Etudiant>
 			+ create(Etudiant etudiant): ResponseEntity<?>
 			+ update(String identifiant, Etudiant etudiant): ResponseEntity<?>
 			+ delete(String identifiant): ResponseEntity<?>
@@ -308,3 +309,102 @@ Exemple : tester avec http://localhost:8080/mvcexample/etudiant
 ====
 
 == Intégralité de l'application
+
+[plantuml, "ex2", png]  
+----
+@startuml
+
+allow_mixing
+
+folder Application {
+	package org.blagnac.coo.mvcexample.ex2 {
+	    class Exemple2Application {
+	        + {static} main(String[] args)
+	        + run(ApplicationArguments args)
+	    }
+	}
+}
+
+folder vue {
+	folder src/main/resources/public {
+		folder js
+	}
+}
+
+folder contrôleur {
+	package org.blagnac.coo.mvcexample.ex2.controller {
+		class Exemple2EtudiantController {
+			+ get(String nom, String prenom, String identifiantGroupeTP): ResponseEntity<List<Etudiant>>
+			+ getById(String identifiant): ResponseEntity<Etudiant>
+			+ create(Etudiant etudiant): ResponseEntity<?>
+			+ update(String identifiant, Etudiant etudiant): ResponseEntity<?>
+			+ delete(String identifiant): ResponseEntity<?>
+		}
+		
+		class Exemple2GroupeTPController {
+			+ getAll(): ResponseEntity<List<GroupeTP>>
+		}
+	}
+	
+	package org.blagnac.coo.mvcexample.controller {
+	    class MainController {
+	        + {static} loadData()
+	    }
+	}
+}
+
+folder modèle {
+	package org.blagnac.coo.mvcexample.model {
+	    class Etudiant {
+	        - identifiant: String
+	        - nom: String
+	        - prenom: String
+	        - groupeTP: GroupeTP
+	        - {static} LISTE: List<Etudiant>
+	        + get...()
+	        + set...(...)
+	        + {static} loadEtudiants()
+	        + {static} getAll(): List<Etudiant>
+	        + {static} getBy(String nom, String prenom, String identifiantGroupeTP): List<Etudiant>
+	        + {static} create(String nom, String prenom, GroupeTP groupeTP): Etudiant
+	        + {static} update(String identifiant, String nom, String prenom, GroupeTP groupeTP): Etudiant
+	        + {static} delete(String identifiant)
+	    }
+	    
+	    class GroupeTP {
+	        - identifiant: String
+	        - groupeTD: GroupeTD
+	        - groupe: Character
+	        - {static} LISTE: List<GroupeTP>
+	        + get...()
+	        + set...(...)
+	        + {static} loadGroupesTP()
+	    }
+	    
+	    class GroupeTD {
+	        - identifiant: String
+	        - annee: int
+	        - numero: int
+	        - {static} LISTE: List<GroupeTD>
+	        + get...()
+	        + set...(...)
+	        + {static} loadGroupesTD()
+	    }
+	}
+}
+
+js --> Exemple2EtudiantController
+js --> Exemple2GroupeTPController
+Exemple2EtudiantController --> Etudiant
+Exemple2GroupeTPController --> GroupeTP
+
+Etudiant "1..*" -- "1" GroupeTP
+GroupeTP "1..2" -- "1" GroupeTD
+
+Exemple2Application --> MainController
+MainController -> Etudiant
+MainController -> GroupeTP
+MainController -> GroupeTD
+
+@enduml
+----
