@@ -91,7 +91,7 @@ Par bonne pratique, dans le cas de l'utilisation d'une vraie base de données, c
 ====
 Toujours pour simplifier (la persistence des données n'étant pas le sujet), les mises à jour (ajout / modification / suppression d'étudiant) ne sont effectives que dans les variables statiques, mais pas répercutées dans les fichiers CSV.
 
-*--> A chaque redémarrage de l'application, les données sont réinitialisées.*
+*-> A chaque redémarrage de l'application, les données sont réinitialisées.*
 ====
 
 [plantuml, "stockage-infos", png]  
@@ -161,16 +161,16 @@ folder "src/main/resources/csv" {
     }
 }
 
-Exemple1Application --> MainController: loadData()
-MainController -> Etudiant: loadEtudiants()
-MainController -> GroupeTP: loadGroupesTP()
-MainController -> GroupeTD: loadGroupesTD()
+Exemple1Application ..> MainController: loadData()
+MainController ..> Etudiant: loadEtudiants()
+MainController ..> GroupeTP: loadGroupesTP()
+MainController ..> GroupeTD: loadGroupesTD()
 
 Etudiant "1..*" -- "1" GroupeTP
 GroupeTP "1..2" -- "1" GroupeTD
-Etudiant --> etudiants.csv: Lecture du fichier CSV
-GroupeTP --> groupesTP.csv: Lecture du fichier CSV
-GroupeTD --> groupesTD.csv: Lecture du fichier CSV
+Etudiant ..> etudiants.csv: Lecture du fichier CSV
+GroupeTP ..> groupesTP.csv: Lecture du fichier CSV
+GroupeTD ..> groupesTD.csv: Lecture du fichier CSV
 
 @enduml
 ----
@@ -214,19 +214,19 @@ Tableau --|> JPanel
 FormRecherche --|> JPanel
 FormActions --|> JPanel
 
-Fenetre --> Formulaires: construit
-Fenetre --> Tableau: construit
-Formulaires --> FormRecherche: construit
-Formulaires --> FormActions: construit
+Fenetre ..> Formulaires: construit
+Fenetre ..> Tableau: construit
+Formulaires ..> FormRecherche: construit
+Formulaires ..> FormActions: construit
 FormRecherche --> Tableau: utilise
 FormActions --> Tableau: utilise
 
-FormRecherche --> GroupeTP: utilise
-FormActions --> GroupeTP: utilise
-FormActions --> Etudiant: utilise
-FormActions --> org.blagnac.coo.mvcexample.ex1.controller: utilise
-Tableau --> Etudiant: utilise
-org.blagnac.coo.mvcexample.ex1.controller --> Etudiant: utilise
+FormRecherche ..> GroupeTP: utilise
+FormActions ..> GroupeTP: utilise
+FormActions ..> Etudiant: utilise
+FormActions ..> org.blagnac.coo.mvcexample.ex1.controller: utilise
+Tableau ..> Etudiant: utilise
+org.blagnac.coo.mvcexample.ex1.controller ..> Etudiant: utilise
 
 @enduml
 ----
@@ -280,9 +280,9 @@ folder modèle {
 	}
 }
 
-Exemple1EtudiantController --> Etudiant: create(nom, prenom, groupeTP)
-Exemple1EtudiantController --> Etudiant: update(identifiant, nom, prenom, groupeTP)
-Exemple1EtudiantController --> Etudiant: delete(identifiant)
+Exemple1EtudiantController ..> Etudiant: create(nom, prenom, groupeTP)
+Exemple1EtudiantController ..> Etudiant: update(identifiant, nom, prenom, groupeTP)
+Exemple1EtudiantController ..> Etudiant: delete(identifiant)
 
 @enduml
 ----
@@ -374,27 +374,27 @@ folder modèle {
 	}
 }
 
-Fenetre --> Formulaires
-Fenetre --> Tableau
-Formulaires --> FormRecherche
-Formulaires --> FormActions
+Fenetre ..> Formulaires
+Fenetre ..> Tableau
+Formulaires ..> FormRecherche
+Formulaires ..> FormActions
 FormRecherche --> Tableau
 FormActions --> Tableau
 
-FormRecherche --> GroupeTP
-FormActions --> GroupeTP
-FormActions --> Etudiant
-FormActions --> Exemple1EtudiantController
-Tableau --> Etudiant
-Exemple1EtudiantController --> Etudiant
+FormRecherche ..> GroupeTP
+FormActions ..> GroupeTP
+FormActions ..> Etudiant
+FormActions ..> Exemple1EtudiantController
+Tableau ..> Etudiant
+Exemple1EtudiantController ..> Etudiant
 
 Etudiant "1..*" -- "1" GroupeTP
 GroupeTP "1..2" -- "1" GroupeTD
 
-Exemple1Application --> MainController
-MainController -> Etudiant
-MainController -> GroupeTP
-MainController -> GroupeTD
+Exemple1Application ..> MainController
+MainController ..> Etudiant
+MainController ..> GroupeTP
+MainController ..> GroupeTD
 
 @enduml
 ----

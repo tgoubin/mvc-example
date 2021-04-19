@@ -36,9 +36,9 @@ folder vue {
 	}
 }
 
-index.html --> style.css
-index.html --> index.js
-index.html --> recherche.js
+index.html ..> style.css
+index.html ..> index.js
+index.html ..> recherche.js
 
 @enduml
 ----
@@ -71,7 +71,7 @@ FormActions --|> JPanel
 Fenetre --> Formulaires: construit
 Fenetre --> Tableau: construit
 Formulaires --> FormActions: construit
-FormActions --> Tableau: utilise
+FormActions ..> Tableau: utilise
 
 @enduml
 ----
@@ -214,24 +214,24 @@ folder modèle {
 	}
 }
 
-Fenetre --> Formulaires
-Fenetre --> Tableau
-Formulaires --> FormActions
+Fenetre ..> Formulaires
+Fenetre ..> Tableau
+Formulaires ..> FormActions
 FormActions --> Tableau
-FormActions --> Exemple3EtudiantController: HTTP
-FormActions --> Exemple3GroupeTPController: HTTP
+FormActions ..> Exemple3EtudiantController: HTTP
+FormActions ..> Exemple3GroupeTPController: HTTP
 
-js --> Exemple3EtudiantController: HTTP
-Exemple3EtudiantController --> Etudiant
-Exemple3GroupeTPController --> GroupeTP
+js ..> Exemple3EtudiantController: HTTP
+Exemple3EtudiantController ..> Etudiant
+Exemple3GroupeTPController ..> GroupeTP
 
 Etudiant "1..*" -- "1" GroupeTP
 GroupeTP "1..2" -- "1" GroupeTD
 
-Exemple3Application --> MainController
-MainController -> Etudiant
-MainController -> GroupeTP
-MainController -> GroupeTD
+Exemple3Application ..> MainController
+MainController ..> Etudiant
+MainController ..> GroupeTP
+MainController ..> GroupeTD
 
 @enduml
 ----

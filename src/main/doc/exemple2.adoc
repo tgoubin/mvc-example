@@ -84,12 +84,12 @@ folder vue {
 folder contrôleur {
 }
 
-index.html --> style.css
-index.html --> index.js
-index.html --> recherche.js
-index.html --> actions.js
-recherche.js --> contrôleur: HTTP
-actions.js --> contrôleur: HTTP
+index.html ..> style.css
+index.html ..> index.js
+index.html ..> recherche.js
+index.html ..> actions.js
+recherche.js ..> contrôleur: HTTP
+actions.js ..> contrôleur: HTTP
 
 @enduml
 ----
@@ -188,11 +188,11 @@ folder modèle {
 	}
 }
 
-Exemple2EtudiantController --> Etudiant: LISTE
-Exemple2EtudiantController --> Etudiant: create(nom, prenom, groupeTP)
-Exemple2EtudiantController --> Etudiant: update(identifiant, nom, prenom, groupeTP)
-Exemple2EtudiantController --> Etudiant: delete(identifiant)
-Exemple2GroupeTPController --> GroupeTP: LISTE
+Exemple2EtudiantController ..> Etudiant: LISTE
+Exemple2EtudiantController ..> Etudiant: create(nom, prenom, groupeTP)
+Exemple2EtudiantController ..> Etudiant: update(identifiant, nom, prenom, groupeTP)
+Exemple2EtudiantController ..> Etudiant: delete(identifiant)
+Exemple2GroupeTPController ..> GroupeTP: LISTE
 
 @enduml
 ----
@@ -404,18 +404,18 @@ folder modèle {
 	}
 }
 
-js --> Exemple2EtudiantController: HTTP
-js --> Exemple2GroupeTPController: HTTP
-Exemple2EtudiantController --> Etudiant
-Exemple2GroupeTPController --> GroupeTP
+js ..> Exemple2EtudiantController: HTTP
+js ..> Exemple2GroupeTPController: HTTP
+Exemple2EtudiantController ..> Etudiant
+Exemple2GroupeTPController ..> GroupeTP
 
 Etudiant "1..*" -- "1" GroupeTP
 GroupeTP "1..2" -- "1" GroupeTD
 
-Exemple2Application --> MainController
-MainController -> Etudiant
-MainController -> GroupeTP
-MainController -> GroupeTD
+Exemple2Application ..> MainController
+MainController ..> Etudiant
+MainController ..> GroupeTP
+MainController ..> GroupeTD
 
 @enduml
 ----
