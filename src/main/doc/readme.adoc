@@ -10,12 +10,12 @@ Concevoir son application en respectant une séparation *M* odèle - *V* ue - *C
 ----
 @startuml
 
-package modele
+package modèle
 package contrôleur
 package vue
 
 vue -> contrôleur
-contrôleur -> modele
+contrôleur -> modèle
 modele <.. vue
 
 @enduml

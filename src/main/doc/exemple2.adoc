@@ -128,12 +128,15 @@ Nous obtenons donc un modèle MVC plus "strict" :
 @startuml
 
 folder API {
-	package modèle
-	package contrôleur
+	folder modèle {
+	}
+	folder contrôleur {
+	}
 }
 
 folder "Page web" {
-	package vue
+	folder vue {
+	}
 }
 
 vue -> contrôleur: HTTP
@@ -305,7 +308,15 @@ public ResponseEntity<?> update(
 ====
 Pour tester une méthode GET depuis un navigateur, il suffit de taper son URL complète dans la barre d'adresse. Le JSON brut, produit par l'API, apparaîtra.
 
-Exemple : tester avec http://localhost:8080/mvcexample/etudiant
+Exemple : tester avec 
+
+* http://localhost:8080/mvcexample/etudiant
+* http://localhost:8080/mvcexample/etudiant?groupetp=G12B
+* http://localhost:8080/mvcexample/etudiant/1
+* http://localhost:8080/mvcexample/etudiant/100
+* http://localhost:8080/mvcexample/groupetp
+
+Pour les autres méthodes (POST, PUT ou DELETE), une application de test (type *Postman* ou *SoapUI*) est nécessaire.
 ====
 
 == Intégralité de l'application
@@ -393,8 +404,8 @@ folder modèle {
 	}
 }
 
-js --> Exemple2EtudiantController
-js --> Exemple2GroupeTPController
+js --> Exemple2EtudiantController: HTTP
+js --> Exemple2GroupeTPController: HTTP
 Exemple2EtudiantController --> Etudiant
 Exemple2GroupeTPController --> GroupeTP
 

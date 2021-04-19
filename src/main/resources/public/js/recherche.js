@@ -24,7 +24,7 @@ function onClick_btRechercher() {
 
 		// Ajout du filtre "groupeTP" (correspondance avec le parametre "groupeTP" de la methode "get()" de Example2EtudiantContoller)
 		if (document.getElementById('inputGroupeTP').value !== '') {
-			filtres += 'groupeTP=' + document.getElementById('inputGroupeTP').value + '&';
+			filtres += 'groupetp=' + document.getElementById('inputGroupeTP').value + '&';
 		}
 
 		displayEtudiantsInTable(filtres);

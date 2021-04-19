@@ -42,7 +42,7 @@ public class Exemple2EtudiantController {
 	@RequestMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
 	public ResponseEntity<List<Etudiant>> get(@RequestParam(value = "nom", required = false) String nom,
 			@RequestParam(value = "prenom", required = false) String prenom,
-			@RequestParam(value = "groupeTP", required = false) String identifiantGroupeTP) {
+			@RequestParam(value = "groupetp", required = false) String identifiantGroupeTP) {
 		List<Etudiant> etudiants = null;
 
 		if (nom == null && prenom == null && identifiantGroupeTP == null) {

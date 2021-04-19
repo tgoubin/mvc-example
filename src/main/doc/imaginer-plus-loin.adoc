@@ -2,10 +2,237 @@
 
 = Le modèle MVC par l'exemple : imaginer plus loin
 
+Dans cet exemple, nous allons introduire (sans détails de développement) l'architecture d'une troisième solution, dont voici les spécificités techniques :
+
+* fonctionnalités de recherche / consultation de la liste des étudiants depuis une *page web*
+* fonctionnalités d'administration des étudiants (création / modification / suppression) depuis une interface *Swing*
+
+Cet exemple a pour but de montrer qu'on peut faire cohabiter deux IHM (de différentes technologies), qui se partagent une même API (donc une même partie modèle / contrôleur).
+
 == La partie "modèle"
 
 Voir link:exemple1.html#_la_partie_modèle[exemple 1].
 
 == La partie "vue"
 
+Les deux interfaces peuvent être déduites des exemples précédents :
+
+* la page web de recherche / consultation, à laquelle on retire le formulaire de création / modification / suppression
+
+[plantuml, "ex3-web-vue", png]  
+----
+@startuml
+
+folder vue {
+	folder src/main/resources/public {
+		folder css {
+			file style.css
+		}
+		folder js {
+			file index.js
+			file recherche.js
+		}
+		file index.html
+	}
+}
+
+index.html --> style.css
+index.html --> index.js
+index.html --> recherche.js
+
+@enduml
+----
+
+* l'IHM d'administration, à laquelle on retire le formulaire de recherche
+
+[plantuml, "ex3-swing-vue", png]  
+----
+@startuml
+
+folder vue {
+	package javax.swing {
+		class JFrame
+		class JPanel
+	}
+	
+	package org.blagnac.coo.mvcexample.ex3.view {
+		class Fenetre
+		class Formulaires
+		class Tableau
+		class FormActions
+	}
+}
+
+Fenetre --|> JFrame
+Formulaires --|> JPanel
+Tableau --|> JPanel
+FormActions --|> JPanel
+
+Fenetre --> Formulaires: construit
+Fenetre --> Tableau: construit
+Formulaires --> FormActions: construit
+FormActions --> Tableau: utilise
+
+@enduml
+----
+
+=== Intéractions avec le modèle et le contrôleur
+
+Dans cet exemple, nous faisons donc le choix de partager une *API*. Ce *contrôleur* sera donc lié aux deux interfaces (nous aurions pu uniquement avoir la partie *modèle* en commun).
+
+Si pour la page web, le lien vers la partie contrôleur s'effectuera de la même manière, c'est l'interface Swing qui communiquera différemment avec.
+
+Dans une architecture 100% Java (comme c'était le cas pour l'exemple 1), l'appel des méthodes du contrôleur `createEtudiant(...)`, `updateEtudiant(...)` et `deleteEtudiant(...)` pouvait s'effectuer directement.
+
+Dans ce cas, les services mis à disposition par l'API devant être interrogés via le protocole *HTTP*, les appels de l'IHM Swing vers le contrôleur devront être modifiés pour permettre cela. *Spring* fournit des bibliothèques (*RestTemplate*, *WebClient*, etc...) à cet effet.
+
+Nous obtenons donc ce modèle MVC :
+
+[plantuml, "modele-mvc3", png]  
+----
+@startuml
+
+folder API {
+	folder modèle {
+	}
+	folder contrôleur {
+	}
+}
+
+folder vues {
+    folder "Page web" as web {
+    	usecase "recherche / consultation"
+    }
+    
+    folder "IHM Swing" as swing {
+    	usecase "administration"
+    }
+}
+
+web --> contrôleur: HTTP
+swing --> contrôleur: HTTP
+contrôleur --> modèle: Java
+
+@enduml
+----
+
 == La partie "contrôleur"
+
+Par rapport à l'exemple 2, l'API n'a pas besoin d'être modifiée. Elle est 100% utilisable en l'état.
+
+Voir link:exemple2.html#_la_partie_contrôleur[exemple 2].
+
+== Intégralité de l'application
+
+[plantuml, "ex3", png]  
+----
+@startuml
+
+allow_mixing
+
+folder Application {
+	package org.blagnac.coo.mvcexample.ex3 {
+	    class Exemple3Application {
+	        + {static} main(String[] args)
+	        + run(ApplicationArguments args)
+	    }
+	}
+}
+
+folder vue {
+	folder src/main/resources/public {
+		folder js
+	}
+	
+	package org.blagnac.coo.mvcexample.ex3.view {
+		class Fenetre
+		class Formulaires
+		class Tableau
+		class FormRecherche
+		class FormActions
+	}
+}
+
+folder contrôleur {
+	package org.blagnac.coo.mvcexample.ex3.controller {
+		class Exemple3EtudiantController {
+			+ get(String nom, String prenom, String identifiantGroupeTP): ResponseEntity<List<Etudiant>>
+			+ getById(String identifiant): ResponseEntity<Etudiant>
+			+ create(Etudiant etudiant): ResponseEntity<?>
+			+ update(String identifiant, Etudiant etudiant): ResponseEntity<?>
+			+ delete(String identifiant): ResponseEntity<?>
+		}
+		
+		class Exemple3GroupeTPController {
+			+ getAll(): ResponseEntity<List<GroupeTP>>
+		}
+	}
+	
+	package org.blagnac.coo.mvcexample.controller {
+	    class MainController {
+	        + {static} loadData()
+	    }
+	}
+}
+
+folder modèle {
+	package org.blagnac.coo.mvcexample.model {
+	    class Etudiant {
+	        - identifiant: String
+	        - nom: String
+	        - prenom: String
+	        - groupeTP: GroupeTP
+	        - {static} LISTE: List<Etudiant>
+	        + get...()
+	        + set...(...)
+	        + {static} loadEtudiants()
+	        + {static} getAll(): List<Etudiant>
+	        + {static} getBy(String nom, String prenom, String identifiantGroupeTP): List<Etudiant>
+	        + {static} create(String nom, String prenom, GroupeTP groupeTP): Etudiant
+	        + {static} update(String identifiant, String nom, String prenom, GroupeTP groupeTP): Etudiant
+	        + {static} delete(String identifiant)
+	    }
+	    
+	    class GroupeTP {
+	        - identifiant: String
+	        - groupeTD: GroupeTD
+	        - groupe: Character
+	        - {static} LISTE: List<GroupeTP>
+	        + get...()
+	        + set...(...)
+	        + {static} loadGroupesTP()
+	    }
+	    
+	    class GroupeTD {
+	        - identifiant: String
+	        - annee: int
+	        - numero: int
+	        - {static} LISTE: List<GroupeTD>
+	        + get...()
+	        + set...(...)
+	        + {static} loadGroupesTD()
+	    }
+	}
+}
+
+Fenetre --> Formulaires
+Fenetre --> Tableau
+Formulaires --> FormActions
+FormActions --> Tableau
+FormActions --> Exemple3EtudiantController: HTTP
+FormActions --> Exemple3GroupeTPController: HTTP
+
+js --> Exemple3EtudiantController: HTTP
+Exemple3EtudiantController --> Etudiant
+Exemple3GroupeTPController --> GroupeTP
+
+Etudiant "1..*" -- "1" GroupeTP
+GroupeTP "1..2" -- "1" GroupeTD
+
+Exemple3Application --> MainController
+MainController -> Etudiant
+MainController -> GroupeTP
+MainController -> GroupeTD
+
+@enduml
+----
