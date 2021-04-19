@@ -22,6 +22,9 @@ function load_GroupesTP(selectId) {
 	).then(
 		// 2eme etape : reception de la reponse au format JSON
 		function(result) {
+			// Reset du <select>
+			document.getElementById(selectId).innerHTML = '';
+			
 			// Affichage de la reponse (= les groupes de TP) dans le <select>
 			var option0 = document.createElement('option');
 			option0.text = '';

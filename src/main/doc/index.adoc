@@ -16,7 +16,7 @@ package vue
 
 vue -> contrôleur
 contrôleur -> modèle
-modele <.. vue
+modèle <.. vue
 
 @enduml
 ----
