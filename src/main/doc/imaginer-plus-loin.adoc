@@ -148,7 +148,6 @@ folder vue {
 		class Fenetre
 		class Formulaires
 		class Tableau
-		class FormRecherche
 		class FormActions
 	}
 }

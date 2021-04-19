@@ -9,7 +9,7 @@
 	</formats>
 	<fileSets>
 		<fileSet>
-			<directory>target</directory>
+			<directory>${project.basedir}/target</directory>
 			<outputDirectory>./mvc-example/bin</outputDirectory>
 			<includes>
 				<include>mvc-example1.jar</include>
@@ -17,11 +17,18 @@
 			</includes>
 		</fileSet>
 		<fileSet>
-			<directory>${project.basedir}/target</directory>
+			<directory>${project.basedir}</directory>
 			<outputDirectory>./mvc-example</outputDirectory>
 			<includes>
+				<include>readme.txt</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/target</directory>
+			<outputDirectory>./mvc-example/doc</outputDirectory>
+			<includes>
 				<include>images/**</include>
-				<include>readme.html</include>
+				<include>index.html</include>
 				<include>exemple1.html</include>
 				<include>exemple2.html</include>
 				<include>imaginer-plus-loin.html</include>
