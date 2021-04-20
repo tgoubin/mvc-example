@@ -185,7 +185,7 @@ public class Etudiant implements Serializable {
 					.collect(Collectors.toList());
 		}
 
-		// Filtre par prenom
+		// Filtre par groupe de TP
 		if (identifiantGroupeTP != null && !"".equals(identifiantGroupeTP.trim())) {
 			etudiants = etudiants.stream().filter(e -> e.getGroupeTP().getIdentifiant().equals(identifiantGroupeTP))
 					.collect(Collectors.toList());
