@@ -4,7 +4,7 @@
 
 Dans cet exemple, nous allons introduire (sans détails de développement) l'architecture d'une troisième solution, dont voici les spécificités techniques :
 
-* fonctionnalités de recherche / consultation de la liste des étudiants depuis une *page web*
+* fonctionnalités de recherche / consultation de la liste des étudiants depuis une *page web*, ou une application mobile (*Android* ou *iOS*)
 * fonctionnalités d'administration des étudiants (création / modification / suppression) depuis une interface *Swing*
 
 Cet exemple a pour but de montrer qu'on peut faire cohabiter deux IHM (de différentes technologies), qui se partagent une même API (donc une même partie modèle / contrôleur).
@@ -15,7 +15,7 @@ Voir link:exemple1.html#_la_partie_modèle[exemple 1].
 
 == La partie "vue"
 
-Les deux interfaces peuvent être déduites des exemples précédents :
+Les interfaces web et Swing peuvent être déduites des exemples précédents :
 
 * la page web de recherche / consultation, à laquelle on retire le formulaire de création / modification / suppression
 
@@ -76,15 +76,22 @@ FormActions ..> Tableau: utilise
 @enduml
 ----
 
+N'entrons pas dans le détail des applications mobiles.
+
 === Intéractions avec le modèle et le contrôleur
 
-Dans cet exemple, nous faisons donc le choix de partager une *API*. Ce *contrôleur* sera donc lié aux deux interfaces (nous aurions pu uniquement avoir la partie *modèle* en commun).
+Dans cet exemple, nous faisons donc le choix de partager une seule et même *API*. Ce *contrôleur* sera donc lié à toutes les interfaces (nous aurions pu avoir uniquement la partie *modèle* en commun).
 
 Si pour la page web, le lien vers la partie contrôleur s'effectuera de la même manière, c'est l'interface Swing qui communiquera différemment avec.
 
 Dans une architecture 100% Java (comme c'était le cas pour l'exemple 1), l'appel des méthodes du contrôleur `createEtudiant(...)`, `updateEtudiant(...)` et `deleteEtudiant(...)` pouvait s'effectuer directement.
 
 Dans ce cas, les services mis à disposition par l'API devant être interrogés via le protocole *HTTP*, les appels de l'IHM Swing vers le contrôleur devront être modifiés pour permettre cela. *Spring* fournit des bibliothèques (*RestTemplate*, *WebClient*, etc...) à cet effet.
+
+[NOTE]
+====
+Les applications mobiles communiqueront avec l'API également via le protocole HTTP. Les *kits de développement (SDK)* Android et iOS contiennent les librairies pour.
+====
 
 Nous obtenons donc ce modèle MVC :
 
@@ -101,7 +108,15 @@ folder API {
 
 folder vues {
     folder "Page web" as web {
-    	usecase "recherche / consultation"
+    	usecase "recherche / consultation" as rc1
+    }
+    
+    folder Android {
+    	usecase "recherche / consultation" as rc2
+    }
+    
+    folder iOS {
+    	usecase "recherche / consultation" as rc3
     }
     
     folder "IHM Swing" as swing {
@@ -110,6 +125,8 @@ folder vues {
 }
 
 web --> contrôleur: HTTP
+Android --> contrôleur: HTTP
+iOS --> contrôleur: HTTP
 swing --> contrôleur: HTTP
 contrôleur --> modèle: Java
 
@@ -144,6 +161,12 @@ folder vue {
 		folder js
 	}
 	
+	folder Android {
+   	}
+    
+   	folder iOS {
+   	}
+	
 	package org.blagnac.coo.mvcexample.ex3.view {
 		class Fenetre
 		class Formulaires
@@ -175,7 +198,12 @@ folder contrôleur {
 }
 
 folder modèle {
-	package org.blagnac.coo.mvcexample.model {
+	package org.blagnac.coo.mvcexample.ex3.model.business {
+		class Exemple3EtudiantBusinessComponent {
+			+ checkAndGetByIdentifiant(String identifiant)
+		}
+	}
+	package org.blagnac.coo.mvcexample.model.entity {
 	    class Etudiant {
 	        - identifiant: String
 	        - nom: String
@@ -222,6 +250,10 @@ FormActions ..> Exemple3EtudiantController: HTTP
 FormActions ..> Exemple3GroupeTPController: HTTP
 
 js ..> Exemple3EtudiantController: HTTP
+Android ..> Exemple3EtudiantController: HTTP
+iOS ..> Exemple3EtudiantController: HTTP
+Exemple3EtudiantController ..> Exemple3EtudiantBusinessComponent
+Exemple3EtudiantBusinessComponent ..> Etudiant
 Exemple3EtudiantController ..> Etudiant
 Exemple3GroupeTPController ..> GroupeTP
 

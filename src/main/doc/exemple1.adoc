@@ -16,7 +16,7 @@ La technologie *Java* est donc la seule utilisée.
 Cette partie est valable pour tous les exemples.
 ====
 
-Les classes du modèle sont dans le package `org.blagnac.coo.mvcexample.model` :
+Les classes du modèle sont dans le package `org.blagnac.coo.mvcexample.model.entity` :
 
 * `Etudiant.java`
 * `GroupeTD.java`
@@ -27,7 +27,7 @@ Les classes du modèle sont dans le package `org.blagnac.coo.mvcexample.model` :
 @startuml
 
 folder modèle {
-	package org.blagnac.coo.mvcexample.model {
+	package org.blagnac.coo.mvcexample.model.entity {
 	    class Etudiant {
 	        - identifiant: String
 	        - nom: String
@@ -111,7 +111,7 @@ folder "src/main/java" {
         }
     }
     
-    package org.blagnac.coo.mvcexample.model {
+    package org.blagnac.coo.mvcexample.model.entity {
         class Etudiant {
             - identifiant: String
             - nom: String
@@ -197,7 +197,7 @@ folder vue {
 }
 
 folder modèle {
-	package org.blagnac.coo.mvcexample.model {
+	package org.blagnac.coo.mvcexample.model.entity {
 	    class Etudiant
 	    class GroupeTP
 	}
@@ -275,7 +275,7 @@ folder contrôleur {
 }
 
 folder modèle {
-	package org.blagnac.coo.mvcexample.model {
+	package org.blagnac.coo.mvcexample.model.entity {
 	    class Etudiant
 	}
 }
@@ -290,9 +290,9 @@ Exemple1EtudiantController ..> Etudiant: delete(identifiant)
 Les classes du modèle sont dans le package `org.blagnac.coo.mvcexample.ex1.controller` :
 
 * `Exemple1EtudiantController.java` : le contrôleur qui concerne les étudiants
-** méthode `createEtudiant()` : appel de `Etudiant.create(...)`, après avoir effectué des contrôles métiers
-** méthode `updateEtudiant()` : appel de `Etudiant.update(...)`, après avoir effectué des contrôles métiers
-** méthode `deleteEtudiant()` : appel de `Etudiant.delete(...)`, après avoir effectué des contrôles métiers
+** méthode `createEtudiant()` : appel de `Etudiant.create(...)`, après avoir effectué des contrôles
+** méthode `updateEtudiant()` : appel de `Etudiant.update(...)`, après avoir effectué des contrôles
+** méthode `deleteEtudiant()` : appel de `Etudiant.delete(...)`, après avoir effectué des contrôles
 
 == Intégralité de l'application
 
@@ -335,7 +335,7 @@ folder contrôleur {
 }
 
 folder modèle {
-	package org.blagnac.coo.mvcexample.model {
+	package org.blagnac.coo.mvcexample.model.entity {
 	    class Etudiant {
 	        - identifiant: String
 	        - nom: String

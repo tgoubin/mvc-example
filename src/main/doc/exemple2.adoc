@@ -147,20 +147,6 @@ contrôleur -> modèle: Java
 
 == La partie "contrôleur"
 
-Dans une API, les contrôleurs sont les *points d'entrée* à partir desquels les systèmes extérieurs peuvent accéder aux services mis à disposition.
-
-L'accès à un service se définit avec :
-
-* une URL
-* une méthode HTTP, respectant le standard suivant :
-** GET pour les services de lecture de données
-** POST pour les services de création de données
-** PUT pour les services de modification de données
-** DELETE pour les services de suppression de données
-* Dans le cas d'un POST ou d'un PUT, un éventuel *corps de requête*, écrit dans le langage structuré d'échange des données (généralement le *JSON*)
-
-=== Définition des contrôleurs
-
 [plantuml, "ex2-controleur", png]  
 ----
 @startuml
@@ -182,13 +168,20 @@ folder contrôleur {
 }
 
 folder modèle {
-	package org.blagnac.coo.mvcexample.model {
+	package org.blagnac.coo.mvcexample.ex2.model.business {
+		class Exemple2EtudiantBusinessComponent {
+			+ checkAndGetByIdentifiant(String identifiant)
+		}
+	}
+	
+	package org.blagnac.coo.mvcexample.model.entity {
 	    class Etudiant
 	    class GroupeTP
 	}
 }
 
-Exemple2EtudiantController ..> Etudiant: LISTE
+Exemple2EtudiantController ..> Exemple2EtudiantBusinessComponent: checkAndGetByIdentifiant(identifiant)
+Exemple2EtudiantBusinessComponent ..> Etudiant: LISTE
 Exemple2EtudiantController ..> Etudiant: create(nom, prenom, groupeTP)
 Exemple2EtudiantController ..> Etudiant: update(identifiant, nom, prenom, groupeTP)
 Exemple2EtudiantController ..> Etudiant: delete(identifiant)
@@ -196,6 +189,20 @@ Exemple2GroupeTPController ..> GroupeTP: LISTE
 
 @enduml
 ----
+
+Dans une API, les contrôleurs sont les *points d'entrée* à partir desquels les systèmes extérieurs peuvent accéder aux services mis à disposition.
+
+L'accès à un service se définit avec :
+
+* une URL
+* une méthode HTTP, respectant le standard suivant :
+** GET pour les services de lecture de données
+** POST pour les services de création de données
+** PUT pour les services de modification de données
+** DELETE pour les services de suppression de données
+* Dans le cas d'un POST ou d'un PUT, un éventuel *corps de requête*, écrit dans le langage structuré d'échange des données (généralement le *JSON*)
+
+=== Définition des contrôleurs
 
 Dans notre cas, nous pouvons donc définir deux contrôleurs :
 
@@ -319,6 +326,25 @@ Exemple : tester avec
 Pour les autres méthodes (POST, PUT ou DELETE), une application de test (type *Postman* ou *SoapUI*) est nécessaire.
 ====
 
+=== Enrichissement du modèle : classe métier concernant les étudiants
+
+Dans cet exemple, un traitement est nécessaire pour les méthodes `getById(...)`, `update(...)` et `delete(...)` :
+
+* la tentative de récupération de l'étudiant concerné, à partir de son identifiant
+* l'émission d'une erreur (de type 404 - NOT_FOUND) si l'identifiant ne correpond à un aucun étudiant, puisqu'il est techniquement possible - contrairement à l'exemple 1 - que la vue tente d'accéder à un élément du modèle qui n'existe pas (essayer avec http://localhost:8080/mvcexample/etudiant/100)
+
+Ce processus - qui est un traitement *métier* - peut donc être intégré à une nouvelle classe, nommée ici `Exemple2EtudiantBusinessComponent`.
+
+Puisqu'elle est associée à une logique concernant un élément du *modèle*, nous devons l'intégrer à cette partie.
+
+[NOTE]
+====
+De la même manière que les contrôleurs, cette classe doit être gérée par *Spring*. Pour cela :
+
+* elle est préfixée de l'annotation `@Component`
+* elle est automatiquement construite par le contrôleur, avec l'annotation `@Autowired`
+====
+
 == Intégralité de l'application
 
 [plantuml, "ex2", png]  
@@ -365,7 +391,13 @@ folder contrôleur {
 }
 
 folder modèle {
-	package org.blagnac.coo.mvcexample.model {
+	package org.blagnac.coo.mvcexample.ex2.model.business {
+		class Exemple2EtudiantBusinessComponent {
+			+ checkAndGetByIdentifiant(String identifiant)
+		}
+	}
+
+	package org.blagnac.coo.mvcexample.model.entity {
 	    class Etudiant {
 	        - identifiant: String
 	        - nom: String
@@ -406,6 +438,8 @@ folder modèle {
 
 js ..> Exemple2EtudiantController: HTTP
 js ..> Exemple2GroupeTPController: HTTP
+Exemple2EtudiantController ..> Exemple2EtudiantBusinessComponent
+Exemple2EtudiantBusinessComponent ..> Etudiant
 Exemple2EtudiantController ..> Etudiant
 Exemple2GroupeTPController ..> GroupeTP
 

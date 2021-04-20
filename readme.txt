@@ -28,4 +28,11 @@ Y8,            Y8,        ,8P  Y8,        ,8P      """"""""      88   `8b d8'   
 
 	Contient l'ensemble des sources du projet Maven
 	Effectuer un `mvn clean package` pour générer un ZIP contenant les exécutables et la documentation
+
+- tester l'exemple 1
+	En lançant "mvc-example1.cmd" ou "mvc-example1.sh"
 	
+- tester l'exemple 2
+	- En lançant "mvc-example2.cmd" ou "mvc-example2.sh"
+	- Puis en allant sur http://localhost:8080/mvc-example
+	N.B. Pour constater les intéractions entre la page web et l'API, lancer la console du navigateur (F12 pour Google Chrome - Onglet "Network")

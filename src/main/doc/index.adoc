@@ -23,11 +23,24 @@ modèle <.. vue
 
 === Le modèle
 
-Cette partie contient l'ensemble des éléments liés au modèle de données *métier* de l'application.
+Cette partie contient l'ensemble des éléments liés au modèle de données *métier* de l'application (algorithmes métiers, stucture...).
 
-On peut notamment y retrouver les classes correspondant aux tables d'une base de données.
+On peut notamment y retrouver :
 
-Ces classes sont appelées les *entités*.
+* des classes correspondant aux tables d'une base de données (les *entités*).
+* des classes contenant les traitements métier
+
+[NOTE]
+====
+Le terme *métier* est très courant dans l'informatique logicielle : il concerne tout ce qui est associé au *contexte* de l'application.
+
+Exemples :
+
+* pour une application de gestion de club sportif, les termes métiers pourraient être : licencié, joueur, équipe, compétition, etc...
+* pour une application de saisie des résultats d'examens, les termes métiers pourraient être : étudiant, matière, examen...
+
+Ce sont globalement les éléments qui auraient leur place dans un modèle de base de données.
+====
 
 === La vue
 
@@ -50,8 +63,8 @@ Cette partie contient l'ensemble des éléments qui permettent de contrôler les
 
 * construire son application de manière organisée, en définissant les rôles de chaque composant
 ** un élément de la vue doit uniquement afficher et intéragir avec l'utilisateur
-** un élément du contrôleur doit uniquement traiter (souvent vérifier) les données qui transitent vers le modèle
-** un élément du modèle doit structurer et permettre le stockage des données
+** un élément du contrôleur doit uniquement traiter (souvent traduire) les données qui transitent de la vue vers le modèle, et inversement
+** un élément du modèle doit traiter la logique métier ou structurer et permettre le stockage des données
 * faciliter la maintenance de son application
 ** plus l'organisation est respectée, plus un problème sera rapide à investiguer
 * permettre la conception d'applications "multi-tiers" ou "multi-plateformes"
