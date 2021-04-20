@@ -4,8 +4,10 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
-import org.blagnac.coo.mvcexample.model.Etudiant;
-import org.blagnac.coo.mvcexample.model.GroupeTP;
+import org.blagnac.coo.mvcexample.ex2.model.business.Exemple2EtudiantBusinessComponent;
+import org.blagnac.coo.mvcexample.model.entity.Etudiant;
+import org.blagnac.coo.mvcexample.model.entity.GroupeTP;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 // Ce controleur est accessible depuis l'URL "http://localhost:8080/<server.servlet.context-path declare dans application.properties>/etudiant"
 @RequestMapping(value = "/etudiant")
 public class Exemple2EtudiantController {
+
+	/**
+	 * Auto-injection via Spring
+	 */
+	@Autowired
+	private Exemple2EtudiantBusinessComponent etudiantBusinessComponent;
 
 	/**
 	 * Recuperation des etudiants depuis le modele, eventuellement a partir de
@@ -78,7 +86,7 @@ public class Exemple2EtudiantController {
 
 		// Verification de l'identifiant
 		try {
-			etudiant = checkAndGetByIdentifiant(identifiant);
+			etudiant = etudiantBusinessComponent.checkAndGetByIdentifiant(identifiant);
 		} catch (Exception e) {
 			// On renvoie une erreur avec le code 404 / NOT FOUND (code HTTP pour designer
 			// une ressource introuvable)
@@ -143,7 +151,7 @@ public class Exemple2EtudiantController {
 
 		// Verification de l'identifiant
 		try {
-			checkAndGetByIdentifiant(identifiant);
+			etudiantBusinessComponent.checkAndGetByIdentifiant(identifiant);
 		} catch (Exception e) {
 			// On renvoie une erreur avec le code 404 / NOT FOUND (code HTTP pour designer
 			// une ressource introuvable)
@@ -220,7 +228,7 @@ public class Exemple2EtudiantController {
 
 		// Verification de l'identifiant
 		try {
-			checkAndGetByIdentifiant(identifiant);
+			etudiantBusinessComponent.checkAndGetByIdentifiant(identifiant);
 		} catch (Exception e) {
 			// On renvoie une erreur avec le code 404 / NOT FOUND (code HTTP pour designer
 			// une ressource introuvable)
@@ -230,29 +238,6 @@ public class Exemple2EtudiantController {
 		Etudiant.delete(identifiant);
 
 		return new ResponseEntity<Void>(HttpStatus.OK);
-	}
-
-	/**
-	 * Verification de l'existence d'un etudiant a partir d'un identifiant, puis
-	 * recuperation de l'etudiant
-	 * 
-	 * @param identifiant l'identifiant
-	 * @return l'etudiant
-	 * @throws Exception
-	 */
-	private Etudiant checkAndGetByIdentifiant(String identifiant) throws Exception {
-		Optional<Etudiant> etudiant = Etudiant.LISTE.stream().filter(e -> e.getIdentifiant().equals(identifiant))
-				.findFirst();
-
-		// La liste des etudiants doit contenir un etudiant ayant l'identifiant passe en
-		// parametre
-		if (!etudiant.isPresent()) {
-			String erreur = "La liste ne contient pas d'etudiant correspondant a l'identifiant '" + identifiant + "'";
-			System.err.println(erreur);
-			throw new Exception(erreur);
-		}
-
-		return etudiant.get();
 	}
 
 	/**

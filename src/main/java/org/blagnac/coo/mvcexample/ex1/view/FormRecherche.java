@@ -16,7 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.blagnac.coo.mvcexample.model.GroupeTP;
+import org.blagnac.coo.mvcexample.model.entity.GroupeTP;
 
 /**
  * Formulaire de recherche

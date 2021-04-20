@@ -1,4 +1,4 @@
-package org.blagnac.coo.mvcexample.model;
+package org.blagnac.coo.mvcexample.model.entity;
 
 import java.io.InputStreamReader;
 import java.io.Serializable;

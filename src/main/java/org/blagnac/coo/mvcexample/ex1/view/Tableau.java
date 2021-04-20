@@ -10,7 +10,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
-import org.blagnac.coo.mvcexample.model.Etudiant;
+import org.blagnac.coo.mvcexample.model.entity.Etudiant;
 
 /**
  * Panel contenant le tableau

@@ -17,8 +17,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.blagnac.coo.mvcexample.ex1.controller.Exemple1EtudiantController;
-import org.blagnac.coo.mvcexample.model.Etudiant;
-import org.blagnac.coo.mvcexample.model.GroupeTP;
+import org.blagnac.coo.mvcexample.model.entity.Etudiant;
+import org.blagnac.coo.mvcexample.model.entity.GroupeTP;
 
 /**
  * Formulaire d'actions

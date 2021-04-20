@@ -1,7 +1,7 @@
 package org.blagnac.coo.mvcexample.ex1.controller;
 
-import org.blagnac.coo.mvcexample.model.Etudiant;
-import org.blagnac.coo.mvcexample.model.GroupeTP;
+import org.blagnac.coo.mvcexample.model.entity.Etudiant;
+import org.blagnac.coo.mvcexample.model.entity.GroupeTP;
 
 /**
  * Controleur pour les etudiants (exemple 1)
@@ -105,14 +105,6 @@ public class Exemple1EtudiantController {
 		// L'identifiant ne peut pas etre nul
 		if (identifiant == null) {
 			String erreur = "L'identifiant de l'etudiant ne peut pas etre nul";
-			System.err.println(erreur);
-			throw new Exception(erreur);
-		}
-
-		// La liste des etudiants doit contenir un etudiant ayant l'identifiant passe en
-		// parametre
-		if (!Etudiant.LISTE.stream().filter(e -> e.getIdentifiant().equals(identifiant)).findFirst().isPresent()) {
-			String erreur = "La liste ne contient pas d'etudiant correspondant a l'identifiant '" + identifiant + "'";
 			System.err.println(erreur);
 			throw new Exception(erreur);
 		}
