@@ -331,15 +331,15 @@ Pour les autres méthodes (POST, PUT ou DELETE), une application de test (type *
 Dans cet exemple, un traitement est nécessaire pour les méthodes `getById(...)`, `update(...)` et `delete(...)` :
 
 * la tentative de récupération de l'étudiant concerné, à partir de son identifiant
-* l'émission d'une erreur (de type 404 - NOT_FOUND) si l'identifiant ne correpond à un aucun étudiant, puisqu'il est techniquement possible - contrairement à l'exemple 1 - que la vue tente d'accéder à un élément du modèle qui n'existe pas (essayer avec http://localhost:8080/mvcexample/etudiant/100)
+* l'émission d'une erreur (de type 404 - NOT_FOUND) si l'identifiant ne correpond à un aucun étudiant, puisqu'il est techniquement possible - contrairement à l'exemple 1 - qu'on tente d'accéder à un élément du modèle qui n'existe pas (essayer avec http://localhost:8080/mvcexample/etudiant/100)
 
 Ce processus - qui est un traitement *métier* - peut donc être intégré à une nouvelle classe, nommée ici `Exemple2EtudiantBusinessComponent`.
 
-Puisqu'elle est associée à une logique concernant un élément du *modèle*, nous devons l'intégrer à cette partie.
+Puisqu'elle est associée à une logique concernant un élément du *modèle*, nous devons l'intégrer à cette partie. C'est la méthode `checkAndGetByIdentifiant(String identifiant)`.
 
 [NOTE]
 ====
-De la même manière que les contrôleurs, cette classe doit être gérée par *Spring*. Pour cela :
+De la même manière que les contrôleurs, `Exemple2EtudiantBusinessComponent` doit être gérée par *Spring*. Pour cela :
 
 * elle est préfixée de l'annotation `@Component`
 * elle est automatiquement construite par le contrôleur, avec l'annotation `@Autowired`
