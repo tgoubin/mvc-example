@@ -11,10 +11,11 @@
 	<properties>
 		<java.version>1.8</java.version>
 		<opencsv.version>4.5</opencsv.version>
-		<maven.compiler.version>3.8.1</maven.compiler.version>
-		<maven.jar.version>3.1.0</maven.jar.version>
-		<asciidoctor.maven.version>1.5.6</asciidoctor.maven.version>
-		<asciidoctorj.diagram.maven.version>1.5.8</asciidoctorj.diagram.maven.version>
+		
+		<maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
+		<asciidoctor.plugin.version>1.5.6</asciidoctor.plugin.version>
+		<asciidoctorj.diagram.plugin.version>1.5.8</asciidoctorj.diagram.plugin.version>
+		
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
@@ -36,7 +37,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>${maven.compiler.version}</version>
+				<version>${maven.compiler.plugin.version}</version>
 				<configuration>
 					<encoding>${project.build.sourceEncoding}</encoding>
 					<source>${java.version}</source>
@@ -62,12 +63,12 @@
 			<plugin>
 				<groupId>org.asciidoctor</groupId>
 				<artifactId>asciidoctor-maven-plugin</artifactId>
-				<version>${asciidoctor.maven.version}</version>
+				<version>${asciidoctor.plugin.version}</version>
 				<dependencies>
 					<dependency>
 						<groupId>org.asciidoctor</groupId>
 						<artifactId>asciidoctorj-diagram</artifactId>
-						<version>${asciidoctorj.diagram.maven.version}</version>
+						<version>${asciidoctorj.diagram.plugin.version}</version>
 					</dependency>
 				</dependencies>
 				<executions>
