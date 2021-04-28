@@ -246,7 +246,7 @@ A plusieurs endroits, des éléments de l'IHM ont besoin d'utiliser des données
 * en lecture :
 ** la liste déroulante pour filtrer par groupe de TP : `FormRecherche > getGroupesTP()`
 ** la liste déroulante des étudiants, pour sélectionner qui modifier / supprimer : `FormActions.EtudiantComboBoxModel > getEtudiants()`
-** la liste déroulante pour sélectionner le groupe de TP associé à l'étudiant à modifier / supprimer : `FormActions > onClickBtAjouterEtudiant() / onClickBtModifierEtudiant`
+** la liste déroulante pour sélectionner le groupe de TP associé à l'étudiant à ajouter / modifier : `FormActions > onClickBtAjouterEtudiant() / onClickBtModifierEtudiant()`
 ** le tableau des étudiants : `Tableau > majTableau(...)`
 
 *Dans ce cas, la vue peut accéder directement au modèle, ce qu'elle fait par l'utilisation de `Etudiant.getAll()`, `Etudiant.getBy(...)` et `GroupeTP.LISTE`*.

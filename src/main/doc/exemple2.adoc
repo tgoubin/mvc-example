@@ -97,7 +97,7 @@ actions.js ..> contrôleur: HTTP
 L'IHM est une page web très simple :
 
 * `index.html` décrit la structure de la page HTML
-* `css/style.css` décrit les styles (tailles, polices, positionnement) des éléments de page HTML
+* `css/style.css` décrit les styles (tailles, polices, positionnement) des éléments de la page HTML
 * les fichiers JavaScript du dossier `js` gèrent le dynamisme de la page HTML et les intéractions avec l'API, à travers l'utilisation de la fonction `fetch(...)`, qui permet l'envoi de requêtes HTTP
 
 
