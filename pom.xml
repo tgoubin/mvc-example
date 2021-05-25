@@ -73,7 +73,7 @@
 				</dependencies>
 				<executions>
 					<execution>
-						<id>generate_readme</id>
+						<id>generate_doc</id>
 						<phase>generate-resources</phase>
 						<goals>
 							<goal>process-asciidoc</goal>
