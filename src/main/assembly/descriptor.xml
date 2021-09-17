@@ -17,13 +17,6 @@
 			</includes>
 		</fileSet>
 		<fileSet>
-			<directory>${project.basedir}</directory>
-			<outputDirectory>./mvc-example</outputDirectory>
-			<includes>
-				<include>readme.txt</include>
-			</includes>
-		</fileSet>
-		<fileSet>
 			<directory>${project.basedir}/target</directory>
 			<outputDirectory>./mvc-example/doc</outputDirectory>
 			<includes>
